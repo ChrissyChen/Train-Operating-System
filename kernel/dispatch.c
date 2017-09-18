@@ -13,6 +13,11 @@ PROCESS active_proc;
 PCB *ready_queue [MAX_READY_QUEUES];
 
 
+/*
+ * Puder: The bits in ready_procs tell which ready queue is empty.
+ * The MSB of ready_procs corresponds to ready_queue[7].
+ */
+unsigned ready_procs;
 
 
 /*
@@ -24,6 +29,21 @@ PCB *ready_queue [MAX_READY_QUEUES];
 
 void add_ready_queue (PROCESS proc)
 {
+	//puder: check if PROCESS is valid
+	assert(proc->magic == MAGIC_PCB);
+	int prio = proc->priority;
+	proc->state = STATE_READY;
+	if (ready_queue[prio] == null ) {
+		ready_queue[prio] = proc;
+		proc->next = proc;
+		proc->prev = proc;
+		ready_procs |= 1 << prio;
+	} else {
+		proc->next = ready_queue[prio];
+		proc->prev = ready-queue[prio]->prev; //order matters!
+		ready-queue[prio]->prev->next = proc;
+		ready-queue[prio]->prev = proc;	
+	}
 }
 
 
@@ -37,6 +57,18 @@ void add_ready_queue (PROCESS proc)
 
 void remove_ready_queue (PROCESS proc)
 {
+	assert(proc->magic == MAGIC_PCB);
+	int prio = proc->priority;
+	if (proc->next == proc) {
+		ready_queue[prio] = null;
+		ready_procs ^= 1 << prio; //puder: ... &= ~(1<<prio);
+	} else {
+		ready_queue[prio] = proc->next;
+		proc->prev->next = proc->next;
+		proc->next->prev = proc->prev;
+	}
+
+	
 }
 
 
