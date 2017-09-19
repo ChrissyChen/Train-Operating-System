@@ -118,4 +118,10 @@ void resign()
 
 void init_dispatcher()
 {
+	for (int i = 0; i < MAX_READY_QUEUES; i++) {
+			ready_queue[i] = null;
+	}
+	ready_procs = 0;
+	//set up first process
+	add_ready_queue(active_proc);
 }
