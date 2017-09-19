@@ -33,16 +33,16 @@ void add_ready_queue (PROCESS proc)
 	assert(proc->magic == MAGIC_PCB);
 	int prio = proc->priority;
 	proc->state = STATE_READY;
-	if (ready_queue[prio] == null ) {
+	if (ready_queue[prio] == NULL ) {
 		ready_queue[prio] = proc;
 		proc->next = proc;
 		proc->prev = proc;
 		ready_procs |= 1 << prio;
 	} else {
 		proc->next = ready_queue[prio];
-		proc->prev = ready-queue[prio]->prev; //order matters!
-		ready-queue[prio]->prev->next = proc;
-		ready-queue[prio]->prev = proc;	
+		proc->prev = ready_queue[prio]->prev; //order matters!
+		ready_queue[prio]->prev->next = proc;
+		ready_queue[prio]->prev = proc;	
 	}
 }
 
@@ -60,7 +60,7 @@ void remove_ready_queue (PROCESS proc)
 	assert(proc->magic == MAGIC_PCB);
 	int prio = proc->priority;
 	if (proc->next == proc) {
-		ready_queue[prio] = null;
+		ready_queue[prio] = NULL;
 		ready_procs ^= 1 << prio; //puder: ... &= ~(1<<prio);
 	} else {
 		ready_queue[prio] = proc->next;
@@ -86,7 +86,7 @@ PROCESS dispatcher()
 
 	i = table[ready_procs];
 	assert(i != -1);
-	if (active_proc->proirity == i) {
+	if (active_proc->priority == i) {
 		new_proc = active_proc->next;
 	} else {
 		new_proc = ready_queue[i];
@@ -119,7 +119,7 @@ void resign()
 void init_dispatcher()
 {
 	for (int i = 0; i < MAX_READY_QUEUES; i++) {
-			ready_queue[i] = null;
+			ready_queue[i] = NULL;
 	}
 	ready_procs = 0;
 	//set up first process
