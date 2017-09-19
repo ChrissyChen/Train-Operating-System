@@ -67,8 +67,6 @@ void remove_ready_queue (PROCESS proc)
 		proc->prev->next = proc->next;
 		proc->next->prev = proc->prev;
 	}
-
-	
 }
 
 
@@ -80,9 +78,20 @@ void remove_ready_queue (PROCESS proc)
  * with the highest priority is taken. Within one priority
  * level round robin is used.
  */
-
+// Puder's answer
 PROCESS dispatcher()
 {
+	PROCESS new_proc;
+	unsigned i;
+
+	i = table[ready_procs];
+	assert(i != -1);
+	if (active_proc->proirity == i) {
+		new_proc = active_proc->next;
+	} else {
+		new_proc = ready_queue[i];
+	}
+	return new_proc;
 }
 
 
