@@ -55,8 +55,8 @@ void clear_window(WINDOW* wnd)
 		wy = wnd->y + i;
 		for (int j = 0; j < wnd-> width; j++) {	
 			wx = wnd->x + j;
-			poke_screen(wx, wy, 0);// WORD 00: first 8 bits means ' ', last 8 
-								// bits means black
+			poke_screen(wx, wy, 0);// WORD 00: first 8 bits means black background and black foreground, last 8 
+								// bits means " " char
 		}
 	}
 
@@ -68,6 +68,10 @@ void clear_window(WINDOW* wnd)
 
 void output_char(WINDOW* wnd, unsigned char c)
 {
+
+//todo 09/28/2017 manybe need to remove cursor at first like Puder
+
+
 	if (c == '\n'|| c == 13) {
 		//move_cursor(wnd, 0, wnd->cursor_y++); WRONG!
 		wnd->cursor_x = 0;
