@@ -1,141 +1,135 @@
 
 #include <kernel.h>
 
-#define SCREEN_BASE_ADDR 0xB8000
-#define SCREEN_WIDTH 80
-#define SCREEN_HEIGHT 25
+
+#define SCREEN_BASE_ADDR 0xb8000
+#define SCREEN_WIDTH     80
+#define SCREEN_HEIGHT    25
+
 
 WORD default_color = 0x0f;
 
 
-void poke_screen(int x, int y, WORD ch) 
+
+void poke_screen(int x, int y, WORD ch)
 {
-	poke_w(SCREEN_BASE_ADDR + y * SCREEN_WIDTH * 2 + x * 2, ch);
+    poke_w(SCREEN_BASE_ADDR + y * SCREEN_WIDTH * 2 + x * 2, ch);
 }
 
-WORD peek_screen(int x, int y) 
+
+
+WORD peek_screen(int x, int y)
 {
-	return peek_w(SCREEN_BASE_ADDR + y * SCREEN_WIDTH * 2 + x * 2);
+    return peek_w(SCREEN_BASE_ADDR + y * SCREEN_WIDTH * 2 + x * 2);
 }
 
-//position (x, y) is relative to the top-left of the window
+
+
+void scroll_window(WINDOW* wnd)
+{
+    int          x, y;
+    int          wx, wy;
+
+    for (y = 0; y < wnd->height - 1; y++) {
+	wy = wnd->y + y;
+	for (x = 0; x < wnd->width; x++) {
+	    wx = wnd->x + x;
+	    WORD ch = peek_screen(wx, wy + 1);
+	    poke_screen(wx, wy, ch);
+	}
+    }
+    wy = wnd->y + wnd->height - 1;
+    for (x = 0; x < wnd->width; x++) {
+	wx = wnd->x + x;
+	poke_screen(wx, wy, 0);
+    }
+    wnd->cursor_x = 0;
+    wnd->cursor_y = wnd->height - 1;
+}
+
+
 void move_cursor(WINDOW* wnd, int x, int y)
 {
-	assert(x < wnd->width && y < wnd->height);
-	wnd->cursor_x = x;
-	wnd->cursor_y = y;
-	//if (x < wnd->width && x > 0 && y < wnd->height && y > 0) {
-		//wnd->cursor_x = x;
-		//wnd->cursor_y = y;	
-	//}
-	// puder: assert(x < wnd->width && y < wnd->height);
+    assert(x < wnd->width && y < wnd->height);
+    wnd->cursor_x = x;
+    wnd->cursor_y = y;
 }
 
 
 void remove_cursor(WINDOW* wnd)
 {
-	//wnd->cursor_char = ' '; //need to be double checked. what if 
-							//using show_cursor later
-	poke_screen(wnd->x + wnd->cursor_x, wnd->y + wnd->cursor_y, ' ');
+    poke_screen(wnd->x + wnd->cursor_x,
+		wnd->y + wnd->cursor_y, ' ');
 }
 
 
 void show_cursor(WINDOW* wnd)
 {
-	// don't forget to write the color attribute
-	poke_screen(wnd->x + wnd->cursor_x, wnd->y + wnd->cursor_y, wnd->cursor_char 					| (default_color << 8));
+    poke_screen(wnd->x + wnd->cursor_x,
+		wnd->y + wnd->cursor_y,
+		wnd->cursor_char | (default_color << 8));
 }
 
 
 void clear_window(WINDOW* wnd)
 {
-	//don't know what to write on screen at first. Puder writes 0.
-	int wx, wy;
-	for (int i = 0; i < wnd-> height; i++) {
-		wy = wnd->y + i;
-		for (int j = 0; j < wnd-> width; j++) {	
-			wx = wnd->x + j;
-			poke_screen(wx, wy, 0);// WORD 00: first 8 bits means black background and black foreground, last 8 
-								// bits means " " char
-		}
-	}
+    int x, y;
+    int wx, wy;
 
-	//move cursor to the top-left corner of the window and show cursor
-	move_cursor(wnd, 0, 0);
-	show_cursor(wnd);
+    wnd->cursor_x = 0;
+    wnd->cursor_y = 0;
+    for (y = 0; y < wnd->height; y++) {
+	wy = wnd->y + y;
+	for (x = 0; x < wnd->width; x++) {
+	    wx = wnd->x + x;
+	    poke_screen(wx, wy, 0);
+	}
+    }
+    show_cursor(wnd);
 }
 
 
 void output_char(WINDOW* wnd, unsigned char c)
 {
-
-//todo 09/28/2017 manybe need to remove cursor at first like Puder
-
-
-	if (c == '\n'|| c == 13) {
-		//move_cursor(wnd, 0, wnd->cursor_y++); WRONG!
-		wnd->cursor_x = 0;
-		wnd->cursor_y++;
-	} else if (c == '\b' || c == 8) {
-		if (wnd->cursor_x != 0) {
-			wnd->cursor_x--;
-		} else {
-			if (wnd->cursor_y != 0) {
-				//move_cursor(wnd, wnd->width - 1, --wnd->cursor_y); WRONG!
-				wnd->cursor_x = wnd->width - 1;
-				wnd->cursor_y--;
-			}		
-		}
-		remove_cursor(wnd); // delete ch (previous)
+    remove_cursor(wnd);
+    switch (c) {
+    case '\n':
+    case 13:
+	wnd->cursor_x = 0;
+	wnd->cursor_y++;
+	break;
+    case '\b':
+	if (wnd->cursor_x != 0) {
+	    wnd->cursor_x--;
 	} else {
-		poke_screen(wnd->x + wnd->cursor_x, 
-					wnd->y + wnd->cursor_y, 
-					(short unsigned int) c | (default_color << 8));
-		//move_cursor(wnd, ++wnd->cursor_x, wnd->cursor_y); WRONG!!
-		//cursor_x++ may over wnd->width
-		wnd->cursor_x++;
+	    if (wnd->cursor_y != 0) {
+		wnd->cursor_x = wnd->width - 1;
+		wnd->cursor_y--;
+	    }
 	}
-
+	break;
+    default:
+	poke_screen(wnd->x + wnd->cursor_x,
+		    wnd->y + wnd->cursor_y,
+		    (short unsigned int) c | (default_color << 8));
+	wnd->cursor_x++;
 	if (wnd->cursor_x == wnd->width) {
-		//move_cursor(wnd, 0, wnd->cursor_y++); WRONG!
-		wnd->cursor_x = 0;
-		wnd->cursor_y++;
+	    wnd->cursor_x = 0;
+	    wnd->cursor_y++;
 	}
-	if (wnd->cursor_y == wnd->height) {
-		scroll_window(wnd);	
-	}
-	show_cursor(wnd);
+	break;
+    }
+    if (wnd->cursor_y == wnd->height)
+	scroll_window(wnd);
+    show_cursor(wnd);
 }
 
-void scroll_window(WINDOW* wnd)
-{
-	int wx, wy;
-	WORD word_to_copy;
 
-	for (int i = 0; i < wnd-> width; i++) {
-		wx = wnd->x + i;
-		for (int j = 0; j < wnd-> height-1; j++) {	
-			wy = wnd->y + j;
-			//copy next line char to previous line char
-			word_to_copy = peek_screen(wx, wy+1);
-			poke_screen(wx, wy, word_to_copy);
-		}
-		move_cursor(wnd, i, wnd->height - 1); //move cursor to the bottom line
-		remove_cursor(wnd); //clear bottom char
-	}
-
-	//move cursor to the first position of the bottom line
-	move_cursor(wnd, 0, wnd->height - 1);
-}
 
 void output_string(WINDOW* wnd, const char *str)
 {
-	int len = k_strlen(str);
-	for(int i = 0; i < len; i++) {
-		output_char(wnd, *str);
-		str++;
-	}
-	//puder: while (*str != '\0') output_char(wnd, *str++);
+    while (*str != '\0')
+	output_char(wnd, *str++);
 }
 
 
