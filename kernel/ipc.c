@@ -79,7 +79,7 @@ void send (PORT dest_port, void* data)
 		active_proc->state = STATE_SEND_BLOCKED;
 		active_proc->param_data = data;//???
 	}
-
+	active_proc->param_data = data; //???
 	remove_ready_queue (active_proc);
     resign();
 }
@@ -158,7 +158,7 @@ void* receive (PROCESS* sender)
 		}
     } else {  /* No messages pending */
     	remove_ready_queue (active_proc);
-    	active_proc->param_data = data;
+    	active_proc->param_data = data; //?? NULL?
     	active_proc->state = STATE_RECEIVE_BLOCKED;
     	resign();
     	*sender = active_proc->param_proc; //???
