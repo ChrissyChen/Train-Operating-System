@@ -25,6 +25,15 @@ void load_idt (IDT* base)
 
 void init_idt_entry (int intr_no, void (*isr) (void))
 {
+	idt[intr_no].offset_0_15  = (unsigned) isr & 0xffff;
+    idt[intr_no].offset_16_31 = ((unsigned) isr >> 16) & 0xffff;
+    idt[intr_no].selector     = CODE_SELECTOR;
+    idt[intr_no].dword_count  = 0;
+    idt[intr_no].unused       = 0;
+    idt[intr_no].type         = 0xe;
+    idt[intr_no].dt           = 0;
+    idt[intr_no].dpl          = 0;
+    idt[intr_no].p            = 1;
 }
 
 
