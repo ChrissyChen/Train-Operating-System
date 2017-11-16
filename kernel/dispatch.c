@@ -30,6 +30,9 @@ unsigned ready_procs;
 void add_ready_queue (PROCESS proc)
 {
     int          prio;
+    volatile int flag;
+    
+    DISABLE_INTR (flag);
     assert (proc->magic == MAGIC_PCB);
     prio = proc->priority;
     if (ready_queue [prio] == NULL) {
@@ -46,6 +49,7 @@ void add_ready_queue (PROCESS proc)
 	ready_queue [prio]->prev       = proc;
     }
     proc->state = STATE_READY;
+    ENABLE_INTR (flag);
 }
 
 
@@ -60,6 +64,9 @@ void add_ready_queue (PROCESS proc)
 void remove_ready_queue (PROCESS proc)
 {
     int          prio;
+    volatile int flag;
+    
+    DISABLE_INTR (flag);
     assert (proc->magic == MAGIC_PCB);
     prio = proc->priority;
     if (proc->next == proc) {
@@ -71,6 +78,7 @@ void remove_ready_queue (PROCESS proc)
 	proc->next->prev   = proc->prev;
 	proc->prev->next   = proc->next;
     }
+    ENABLE_INTR (flag);
 }
 
 
@@ -87,6 +95,9 @@ PROCESS dispatcher()
 {
     PROCESS      new_proc;
     unsigned     i;
+    volatile int flag;
+    
+    DISABLE_INTR (flag);
     
     /* Find queue with highest priority that is not empty */
     i = table[ready_procs];
@@ -97,6 +108,7 @@ PROCESS dispatcher()
     else
 	/* Dispatch a process at a different priority level */
 	new_proc = ready_queue [i];
+    ENABLE_INTR (flag);
     return new_proc;
 }
 
@@ -113,6 +125,12 @@ PROCESS dispatcher()
 void resign()
 {
     /*
+     *	PUSHFL
+     *	CLI
+     *	POPL	%EAX		; EAX = Flags
+     *	XCHGL	(%ESP),%EAX     ; Swap return adr with flags
+     *	PUSH	%CS 		; Push CS
+     *	PUSHL	%EAX		; Push return address
      *  PUSHL	%EAX		; Save process' context
      *  PUSHL   %ECX
      *  PUSHL   %EDX
@@ -121,6 +139,8 @@ void resign()
      *  PUSHL   %ESI
      *  PUSHL   %EDI
      */
+    asm ("pushfl;cli;popl %eax;xchgl (%esp),%eax");
+    asm ("push %cs;pushl %eax");
     asm ("pushl %eax;pushl %ecx;pushl %edx");
     asm ("pushl %ebx;pushl %ebp;pushl %esi;pushl %edi");
 
@@ -141,11 +161,11 @@ void resign()
      *  POPL  %EDX
      *  POPL  %ECX
      *  POPL  %EAX
-     *	RET		; Return to new process
+     *	IRET		; Return to new process
      */
     asm ("popl %edi;popl %esi;popl %ebp;popl %ebx");
     asm ("popl %edx;popl %ecx;popl %eax");
-    asm ("ret");
+    asm ("iret");
 }
 
 

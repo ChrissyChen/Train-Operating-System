@@ -25,7 +25,7 @@ void load_idt (IDT* base)
 
 void init_idt_entry (int intr_no, void (*isr) (void))
 {
-	idt[intr_no].offset_0_15  = (unsigned) isr & 0xffff;
+    idt[intr_no].offset_0_15  = (unsigned) isr & 0xffff;
     idt[intr_no].offset_16_31 = ((unsigned) isr >> 16) & 0xffff;
     idt[intr_no].selector     = CODE_SELECTOR;
     idt[intr_no].dword_count  = 0;
@@ -168,10 +168,56 @@ void dummy_spurious_int ()
 void isr_timer ();
 void isr_timer_wrapper()
 {
+    /*
+     *	PUSHL	%EAX		; Save process' context
+     *  PUSHL   %ECX
+     *  PUSHL   %EDX
+     *  PUSHL   %EBX
+     *  PUSHL   %EBP
+     *  PUSHL   %ESI
+     *  PUSHL   %EDI
+     */
+    asm ("isr_timer:");
+    asm ("pushl %eax;pushl %ecx;pushl %edx");
+    asm ("pushl %ebx;pushl %ebp;pushl %esi;pushl %edi");
+    /* Save the context pointer ESP to the PCB */
+    asm ("movl %%esp,%0" : "=m" (active_proc->esp) : );
+    /* Call the actual implementation of the ISR */
+    asm ("call isr_timer_impl");
+    /* Restore context pointer ESP */
+    asm ("movl %0,%%esp" : : "m" (active_proc->esp) );
+    /*
+     *	MOVB  $0x20,%AL	; Reset interrupt controller
+     *	OUTB  %AL,$0x20
+     *	POPL  %EDI      ; Restore previously saved context
+     *  POPL  %ESI
+     *  POPL  %EBP
+     *  POPL  %EBX
+     *  POPL  %EDX
+     *  POPL  %ECX
+     *  POPL  %EAX
+     *	IRET		; Return to new process
+     */
+    asm ("movb $0x20,%al;outb %al,$0x20");
+    asm ("popl %edi;popl %esi;popl %ebp;popl %ebx");
+    asm ("popl %edx;popl %ecx;popl %eax");
+    asm ("iret");
 }
 
 void isr_timer_impl ()
 {
+    /*
+     * If a process is waiting for this interrupt, then put it back
+     * to the ready queue.
+     */
+    PROCESS p = interrupt_table[TIMER_IRQ];
+    if (p && p->state == STATE_INTR_BLOCKED) {
+	/* Add event handler to ready queue */
+	add_ready_queue (p);
+    }
+    
+    /* Dispatch new process */
+    active_proc = dispatcher();
 }
 
 
@@ -182,10 +228,56 @@ void isr_timer_impl ()
 void isr_com1 ();
 void wrapper_isr_com1 ()
 {
+    /*
+     *	PUSHL	%EAX		; Save process' context
+     *  PUSHL   %ECX
+     *  PUSHL   %EDX
+     *  PUSHL   %EBX
+     *  PUSHL   %EBP
+     *  PUSHL   %ESI
+     *  PUSHL   %EDI
+     */
+    asm ("isr_com1:");
+    asm ("pushl %eax;pushl %ecx;pushl %edx");
+    asm ("pushl %ebx;pushl %ebp;pushl %esi;pushl %edi");
+    /* Save the context pointer ESP to the PCB */
+    asm ("movl %%esp,%0" : "=m" (active_proc->esp) : );
+    /* Call the actual implementation of the ISR */
+    asm ("call isr_com1_impl");
+    /* Restore context pointer ESP */
+    asm ("movl %0,%%esp" : : "m" (active_proc->esp) );
+    /*
+     *	MOVB  $0x20,%AL	; Reset interrupt controller
+     *	OUTB  %AL,$0x20
+     *	POPL  %EDI      ; Restore previously saved context
+     *  POPL  %ESI
+     *  POPL  %EBP
+     *  POPL  %EBX
+     *  POPL  %EDX
+     *  POPL  %ECX
+     *  POPL  %EAX
+     *	IRET		; Return to new process
+     */
+    asm ("movb $0x20,%al;outb %al,$0x20");
+    asm ("popl %edi;popl %esi;popl %ebp;popl %ebx");
+    asm ("popl %edx;popl %ecx;popl %eax");
+    asm ("iret");
 }
 
 void isr_com1_impl()
 {
+    PROCESS p;
+    if ((p = interrupt_table[COM1_IRQ]) == NULL)
+	panic ("service_intr_0x64: Spurious interrupt");
+    
+    if (p->state != STATE_INTR_BLOCKED)
+	panic ("service_intr_0x64: No process waiting");
+
+    /* Add event handler to ready queue */
+    add_ready_queue (p);
+
+    /* Dispatch new process */
+    active_proc = dispatcher();
 }
 
 
@@ -251,6 +343,17 @@ void isr_keyb_impl()
 
 void wait_for_interrupt (int intr_no)
 {
+    volatile int flag;
+
+    DISABLE_INTR (flag);
+    if (interrupt_table [intr_no] != NULL)
+	panic ("wait_for_interrupt(): ISR busy");
+    interrupt_table [intr_no] = active_proc;
+    remove_ready_queue (active_proc);
+    active_proc->state = STATE_INTR_BLOCKED;
+    resign();
+    interrupt_table [intr_no] = NULL;
+    ENABLE_INTR (flag);
 }
 
 
@@ -288,14 +391,14 @@ void re_program_interrupt_controller ()
 
 void init_interrupts()
 {
-	int i;
+    int i;
 
     assert (sizeof (IDT) == IDT_ENTRY_SIZE);
     
     load_idt (idt);
 
     for (i = 0; i < MAX_INTERRUPTS; i++)
-		init_idt_entry (i, spurious_int);
+	init_idt_entry (i, spurious_int);
 
     init_idt_entry (0, exception0);
     init_idt_entry (1, exception1);
@@ -314,9 +417,13 @@ void init_interrupts()
     init_idt_entry (14, exception14);
     init_idt_entry (15, exception15);
     init_idt_entry (16, exception16);
+    init_idt_entry (TIMER_IRQ, isr_timer);
+    init_idt_entry (COM1_IRQ, isr_com1);
     
     re_program_interrupt_controller();
     
+    for (i = 0; i < MAX_INTERRUPTS; i++)
+	interrupt_table [i] = NULL;
     interrupts_initialized = TRUE;
     asm ("sti");
 }
