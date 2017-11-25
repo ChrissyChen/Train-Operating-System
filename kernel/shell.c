@@ -12,7 +12,20 @@ typedef struct _Buffer_Command
 	int length;
 } Buffer_Command;
 
-void execute_command (int window_id, Buffer_Command *command)
+
+// Remove all whitespaces. Only support one-word command now.
+void remove_whitespace (Buffer_Command *command, Buffer_Command *removed_command)
+{
+	removed_command->length = 0;
+	for (int i = 0, j = 0; i < command->length; i++) {
+		if (command->buffer[i] != ' ') {
+			removed_command->buffer[j++] = command->buffer[i];
+			removed_command->length++;
+		}
+	}
+}
+
+void execute_command (int window_id, Buffer_Command *removed_command)
 {
 	
 }
@@ -46,7 +59,6 @@ BOOL read_command (int window_id, Buffer_Command *command)
 				}
 				break;
 		}
-
 		keystroke = keyb_get_keystroke (window_id, TRUE);
 	}
 
@@ -64,12 +76,14 @@ void clear_command_buffer (Buffer_Command *command)
 }
 
 
+// For testing
 void print_command (int window_id, Buffer_Command *command)
 {
 	wm_print (window_id, "\n[Test] You just typed: \n");
 	for (int i = 0; i < command->length; i++) {
 		wm_print (window_id, "%c", command->buffer[i]);
 	}
+	wm_print (window_id, "\n[Test] Command Length: %d\n", command->length);
 }
 
 
@@ -80,32 +94,38 @@ void print_welcome (int window_id)
 }
 
 
+// Entry point of the shell process
 void shell_process (PROCESS self, PARAM param)
 {
-	Buffer_Command *command;
+	Buffer_Command command;
+	Buffer_Command *command_ptr = &command;
 	Buffer_Command *history_command[MAX_COMMAND_HISTORY];
+	Buffer_Command removed_command;
+	Buffer_Command *removed_command_ptr = &removed_command;
 	int i = 0;
-	BOOL exceed_limit; // do not need to init to FALSE?
+	BOOL exceed_limit; 
 
 	int window_id = wm_create (10, 3, 50, 17);
 	print_welcome (window_id);
 	
 	while (1) {
 		wm_print (window_id, "\n> ");
-		exceed_limit = read_command (window_id, command);
-		if (exceed_limit == FALSE) {
-			history_command[i] = command;
-			print_command (window_id, command);
+		exceed_limit = read_command (window_id, command_ptr);
+		if (exceed_limit == FALSE && command_ptr->buffer[0] != '\0') {
+			history_command[i++] = command_ptr;
+			print_command (window_id, command_ptr); // for testing only
 
-			//remove_whitespace (command);
-			//execute_command (window_id, command);	
+			remove_whitespace (command_ptr, removed_command_ptr);
+			print_command (window_id, removed_command_ptr); 
+			//execute_command (window_id, removed_command_ptr);	
+			clear_command_buffer (removed_command_ptr);
 		} 
-		clear_command_buffer (command);
+		clear_command_buffer (command_ptr);
 	}
 }
 
 
-// init shell process
+// Init shell process
 void start_shell ()
 {
 	create_process (shell_process, 5, 0, "Shell Porcess");
