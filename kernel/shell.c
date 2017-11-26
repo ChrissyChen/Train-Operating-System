@@ -25,8 +25,30 @@ void remove_whitespace (Buffer_Command *command, Buffer_Command *removed_command
 	}
 }
 
+
 void execute_command (int window_id, Buffer_Command *removed_command)
 {
+	//wm_print (window_id, "\nRemoved command: %s", removed_command->buffer);
+	if (k_memcmp (removed_command->buffer, "help", k_strlen("help")) == 0) {
+		wm_print (window_id, "\nyes help");
+
+	} else if (k_memcmp (removed_command->buffer, "cls", k_strlen("cls")) == 0) {
+		wm_print (window_id, "\nyes cls");
+	} else if (k_memcmp (removed_command->buffer, "shell", k_strlen("shell")) == 0) {
+		wm_print (window_id, "\nyes shell");
+	} else if (k_memcmp (removed_command->buffer, "pong", k_strlen("pong")) == 0) {
+		wm_print (window_id, "\nyes pong");
+	} else if (k_memcmp (removed_command->buffer, "ps", k_strlen("ps")) == 0) {
+		wm_print (window_id, "\nyes ps");
+	} else if (k_memcmp (removed_command->buffer, "history", k_strlen("history")) == 0) {
+		wm_print (window_id, "\nyes history");
+	} else if (k_memcmp (removed_command->buffer, "!", k_strlen("!")) == 0) { //???
+		wm_print (window_id, "\nyes !");
+	} else if (k_memcmp (removed_command->buffer, "about", k_strlen("about")) == 0) {
+		wm_print (window_id, "\nyes about");
+	} else {
+		wm_print (window_id, "\n[Error] Invalid command!");
+	}
 	
 }
 
@@ -50,7 +72,7 @@ BOOL read_command (int window_id, Buffer_Command *command)
 			default: // including whitespaces
 				if (command->length >= MAX_COMMAND_LEN) {
 					exceed_limit = TRUE;
-					wm_print (window_id, "\n[Error] Max command length is %d\n", MAX_COMMAND_LEN);
+					wm_print (window_id, "\n[Error] Max command length is %d", MAX_COMMAND_LEN);
 					return exceed_limit;
 				} else {
 					command->buffer[command->length] = keystroke;
@@ -113,11 +135,12 @@ void shell_process (PROCESS self, PARAM param)
 		exceed_limit = read_command (window_id, command_ptr);
 		if (exceed_limit == FALSE && command_ptr->buffer[0] != '\0') {
 			history_command[i++] = command_ptr;
-			print_command (window_id, command_ptr); // for testing only
+			print_command (window_id, command_ptr); 
 
 			remove_whitespace (command_ptr, removed_command_ptr);
 			print_command (window_id, removed_command_ptr); 
-			//execute_command (window_id, removed_command_ptr);	
+
+			execute_command (window_id, removed_command_ptr);	
 			clear_command_buffer (removed_command_ptr);
 		} 
 		clear_command_buffer (command_ptr);
