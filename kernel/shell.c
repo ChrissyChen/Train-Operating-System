@@ -13,6 +13,21 @@ typedef struct _Buffer_Command
 } Buffer_Command;
 
 
+void help (int window_id)
+{
+	wm_print (window_id, "\nTOS commands: \n");
+	wm_print (window_id, "help      print all supported TOS commands\n");
+	wm_print (window_id, "cls       clear the screen/window\n");
+	wm_print (window_id, "shell     launch another shell\n");
+	wm_print (window_id, "pong      launch the PONG game\n");
+	wm_print (window_id, "ps        print out the process table\n");
+	wm_print (window_id, "history   print all commands that have beeen typed\n");
+	wm_print (window_id, "!<number> repeat the command with the given number\n");
+	wm_print (window_id, "about     print out developer's name");
+}
+
+
+
 // Remove leading and trailing whitespaces. Only support one-word command now.
 void remove_whitespace (Buffer_Command *command, Buffer_Command *removed_command)
 {
@@ -39,8 +54,7 @@ void execute_command (int window_id, Buffer_Command *removed_command)
 {
 	//wm_print (window_id, "\nRemoved command: %s", removed_command->buffer);
 	if (k_memcmp (removed_command->buffer, "help", k_strlen("help")) == 0) {
-		wm_print (window_id, "\nyes help");
-
+		help (window_id);
 	} else if (k_memcmp (removed_command->buffer, "cls", k_strlen("cls")) == 0) {
 		wm_print (window_id, "\nyes cls");
 	} else if (k_memcmp (removed_command->buffer, "shell", k_strlen("shell")) == 0) {
@@ -136,7 +150,7 @@ void shell_process (PROCESS self, PARAM param)
 	int i = 0;
 	BOOL exceed_limit; 
 
-	int window_id = wm_create (10, 3, 50, 17);
+	int window_id = wm_create (10, 3, 60, 17);
 	print_welcome (window_id);
 	
 	while (1) {
@@ -144,10 +158,10 @@ void shell_process (PROCESS self, PARAM param)
 		exceed_limit = read_command (window_id, command_ptr);
 		if (exceed_limit == FALSE && command_ptr->buffer[0] != '\0') {
 			history_command[i++] = command_ptr;
-			print_command (window_id, command_ptr); 
+			//print_command (window_id, command_ptr); 
 
 			remove_whitespace (command_ptr, removed_command_ptr);
-			print_command (window_id, removed_command_ptr); 
+			//print_command (window_id, removed_command_ptr); 
 
 			execute_command (window_id, removed_command_ptr);	
 			clear_command_buffer (removed_command_ptr);
