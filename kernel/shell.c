@@ -62,7 +62,7 @@ void execute_command (int window_id, Buffer_Command *removed_command)
 	} else if (k_memcmp (removed_command->buffer, "shell", k_strlen("shell")) == 0) {
 		create_process (shell_process, 5, 0, "Shell Porcess");
 	} else if (k_memcmp (removed_command->buffer, "pong", k_strlen("pong")) == 0) {
-		wm_print (window_id, "\nyes pong");
+		start_pong ();
 	} else if (k_memcmp (removed_command->buffer, "ps", k_strlen("ps")) == 0) {
 		wm_print (window_id, "\nyes ps");
 	} else if (k_memcmp (removed_command->buffer, "history", k_strlen("history")) == 0) {
@@ -153,7 +153,7 @@ void shell_process (PROCESS self, PARAM param)
 	int i = 0;
 	BOOL exceed_limit; 
 
-	int window_id = wm_create (10, 3, 60, 17);
+	int window_id = wm_create (10, 3, 55, 17);
 	print_welcome (window_id);
 	
 	while (1) {
