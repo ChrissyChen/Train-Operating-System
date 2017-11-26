@@ -6,6 +6,8 @@
 #define MAX_COMMAND_LEN 30
 #define MAX_COMMAND_HISTORY 100
 
+void shell_process (PROCESS self, PARAM param);
+
 typedef struct _Buffer_Command
 {
 	char buffer[MAX_COMMAND_LEN];
@@ -58,7 +60,7 @@ void execute_command (int window_id, Buffer_Command *removed_command)
 	} else if (k_memcmp (removed_command->buffer, "cls", k_strlen("cls")) == 0) {
 		wm_clear (window_id);
 	} else if (k_memcmp (removed_command->buffer, "shell", k_strlen("shell")) == 0) {
-		wm_print (window_id, "\nyes shell");
+		create_process (shell_process, 5, 0, "Shell Porcess");
 	} else if (k_memcmp (removed_command->buffer, "pong", k_strlen("pong")) == 0) {
 		wm_print (window_id, "\nyes pong");
 	} else if (k_memcmp (removed_command->buffer, "ps", k_strlen("ps")) == 0) {
