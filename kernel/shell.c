@@ -13,15 +13,24 @@ typedef struct _Buffer_Command
 } Buffer_Command;
 
 
-// Remove all whitespaces. Only support one-word command now.
+// Remove leading and trailing whitespaces. Only support one-word command now.
 void remove_whitespace (Buffer_Command *command, Buffer_Command *removed_command)
 {
 	removed_command->length = 0;
-	for (int i = 0, j = 0; i < command->length; i++) {
-		if (command->buffer[i] != ' ') {
-			removed_command->buffer[j++] = command->buffer[i];
-			removed_command->length++;
-		}
+	int i, start, end;
+	for (i = 0; i < command->length; i++) {
+		if (command->buffer[i] != ' ') break;
+	}
+	start = i;
+
+	for (i = command->length - 1; i >= 0; i--) {
+		if (command->buffer[i] != ' ') break;
+	}
+	end = i;
+
+	for (int j = 0, i = start; i <= end; i++) {
+		removed_command->buffer[j++] = command->buffer[i];
+		removed_command->length++;
 	}
 }
 
