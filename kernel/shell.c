@@ -85,10 +85,13 @@ void about (int window_id)
 }
 
 
-///////////BOOL compare_string (Buffer_Command *removed_command, 
-
-
-
+BOOL compare_string (Buffer_Command *removed_command, char *target)
+{
+	int length = k_strlen (target);
+	BOOL is_same_char = (k_memcmp (removed_command->buffer, target, length) == 0);
+	BOOL is_same_length = (removed_command->length == length);
+	return is_same_char && is_same_length;
+}
 
 
 // Remove leading and trailing whitespaces. Only support one-word command now.
@@ -115,27 +118,32 @@ void remove_whitespace (Buffer_Command *command, Buffer_Command *removed_command
 
 void execute_command (int window_id, Buffer_Command *removed_command, Buffer_Command *history_command_ptr, int num)
 {
-	//wm_print (window_id, "\nRemoved command: %s", removed_command->buffer);
-	if (k_memcmp (removed_command->buffer, "help", k_strlen("help")) == 0) {
+	if (compare_string (removed_command, "help")) {
 		help (window_id);
-	} else if (k_memcmp (removed_command->buffer, "cls", k_strlen("cls")) == 0) {
+
+	} else if (compare_string (removed_command, "cls")) {
 		wm_clear (window_id);
-	} else if (k_memcmp (removed_command->buffer, "shell", k_strlen("shell")) == 0) {
+
+	} else if (compare_string (removed_command, "shell")) {
 		create_process (shell_process, 5, 0, "Shell Porcess");
-	} else if (k_memcmp (removed_command->buffer, "pong", k_strlen("pong")) == 0) {
+
+	} else if (compare_string (removed_command, "pong")) {
 		start_pong ();
-	} else if (k_memcmp (removed_command->buffer, "ps", k_strlen("ps")) == 0) {
+
+	} else if (compare_string (removed_command, "ps")) {
 		print_processes (window_id);
-	} else if (k_memcmp (removed_command->buffer, "history", k_strlen("history")) == 0) {
+	} else if (compare_string (removed_command, "history")) {
 		show_history (window_id, history_command_ptr, num);
-	} else if (k_memcmp (removed_command->buffer, "!", k_strlen("!")) == 0) { //???
+
+	} else if (compare_string (removed_command, "!")) { //???
 		wm_print (window_id, "\nyes !");
-	} else if (k_memcmp (removed_command->buffer, "about", k_strlen("about")) == 0) {
+
+	} else if (compare_string (removed_command, "about")) {
 		about (window_id);
+
 	} else {
 		wm_print (window_id, "[Error] Invalid command!\n");
 	}
-	
 }
 
 
@@ -207,10 +215,7 @@ void shell_process (PROCESS self, PARAM param)
 {
 	Buffer_Command command;
 	Buffer_Command removed_command;
-	//Buffer_Command *removed_command_ptr = &removed_command;
 	Buffer_Command history_command[MAX_COMMAND_HISTORY];
-	//Buffer_Command *history_command_ptr = &history_command[0];
-	//char history_command[MAX_COMMAND_HISTORY][MAX_COMMAND_LEN];
 	int i = 0;
 	BOOL exceed_limit; 
 
@@ -218,8 +223,6 @@ void shell_process (PROCESS self, PARAM param)
 	print_welcome (window_id);
 	
 	while (1) {
-		
-		//Buffer_Command *command_ptr = &command;
 		wm_print (window_id, "> ");
 		exceed_limit = read_command (window_id, &command);
 		if (exceed_limit == FALSE && command.buffer[0] != '\0') {
