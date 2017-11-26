@@ -15,7 +15,7 @@ typedef struct _Buffer_Command
 
 void help (int window_id)
 {
-	wm_print (window_id, "\nTOS commands: \n");
+	wm_print (window_id, "TOS commands: \n");
 	wm_print (window_id, "help      print all supported TOS commands\n");
 	wm_print (window_id, "cls       clear the screen/window\n");
 	wm_print (window_id, "shell     launch another shell\n");
@@ -23,7 +23,7 @@ void help (int window_id)
 	wm_print (window_id, "ps        print out the process table\n");
 	wm_print (window_id, "history   print all commands that have beeen typed\n");
 	wm_print (window_id, "!<number> repeat the command with the given number\n");
-	wm_print (window_id, "about     print out developer's name");
+	wm_print (window_id, "about     print out developer's name\n");
 }
 
 
@@ -56,7 +56,7 @@ void execute_command (int window_id, Buffer_Command *removed_command)
 	if (k_memcmp (removed_command->buffer, "help", k_strlen("help")) == 0) {
 		help (window_id);
 	} else if (k_memcmp (removed_command->buffer, "cls", k_strlen("cls")) == 0) {
-		wm_print (window_id, "\nyes cls");
+		wm_clear (window_id);
 	} else if (k_memcmp (removed_command->buffer, "shell", k_strlen("shell")) == 0) {
 		wm_print (window_id, "\nyes shell");
 	} else if (k_memcmp (removed_command->buffer, "pong", k_strlen("pong")) == 0) {
@@ -70,7 +70,7 @@ void execute_command (int window_id, Buffer_Command *removed_command)
 	} else if (k_memcmp (removed_command->buffer, "about", k_strlen("about")) == 0) {
 		wm_print (window_id, "\nyes about");
 	} else {
-		wm_print (window_id, "\n[Error] Invalid command!");
+		wm_print (window_id, "[Error] Invalid command!\n");
 	}
 	
 }
@@ -95,7 +95,7 @@ BOOL read_command (int window_id, Buffer_Command *command)
 			default: // including whitespaces
 				if (command->length >= MAX_COMMAND_LEN) {
 					exceed_limit = TRUE;
-					wm_print (window_id, "\n[Error] Max command length is %d", MAX_COMMAND_LEN);
+					wm_print (window_id, "\n[Error] Max command length is %d\n", MAX_COMMAND_LEN);
 					return exceed_limit;
 				} else {
 					command->buffer[command->length] = keystroke;
@@ -108,6 +108,7 @@ BOOL read_command (int window_id, Buffer_Command *command)
 	}
 
 	command->buffer[command->length] = '\0';
+	wm_print (window_id, "\n");
 	return exceed_limit;
 }
 
@@ -124,7 +125,7 @@ void clear_command_buffer (Buffer_Command *command)
 // For testing
 void print_command (int window_id, Buffer_Command *command)
 {
-	wm_print (window_id, "\n[Test] You just typed: \n");
+	wm_print (window_id, "[Test] You just typed: \n");
 	for (int i = 0; i < command->length; i++) {
 		wm_print (window_id, "%c", command->buffer[i]);
 	}
@@ -135,7 +136,7 @@ void print_command (int window_id, Buffer_Command *command)
 void print_welcome (int window_id)
 {
 	wm_print (window_id, "****** Welcome to TOS Shell ******\n");
-	wm_print (window_id, "Type [help] to show all TOS commands\n");
+	wm_print (window_id, "Type [help] to show all TOS commands\n\n");
 }
 
 
@@ -154,7 +155,7 @@ void shell_process (PROCESS self, PARAM param)
 	print_welcome (window_id);
 	
 	while (1) {
-		wm_print (window_id, "\n> ");
+		wm_print (window_id, "> ");
 		exceed_limit = read_command (window_id, command_ptr);
 		if (exceed_limit == FALSE && command_ptr->buffer[0] != '\0') {
 			history_command[i++] = command_ptr;
