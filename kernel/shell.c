@@ -68,6 +68,19 @@ void print_processes (int window_id)
 }
 
 
+void about (int window_id)
+{
+	wm_print (window_id, "----------- Peace and Love -----------\n\n");
+	wm_print (window_id, "              Xinlu Chen                \n");
+	wm_print (window_id, "        =^__________________^=          \n");
+}
+
+
+///////////BOOL compare_string (Buffer_Command *removed_command, 
+
+
+
+
 
 // Remove leading and trailing whitespaces. Only support one-word command now.
 void remove_whitespace (Buffer_Command *command, Buffer_Command *removed_command)
@@ -109,7 +122,7 @@ void execute_command (int window_id, Buffer_Command *removed_command)
 	} else if (k_memcmp (removed_command->buffer, "!", k_strlen("!")) == 0) { //???
 		wm_print (window_id, "\nyes !");
 	} else if (k_memcmp (removed_command->buffer, "about", k_strlen("about")) == 0) {
-		wm_print (window_id, "\nyes about");
+		about (window_id);
 	} else {
 		wm_print (window_id, "[Error] Invalid command!\n");
 	}
