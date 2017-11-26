@@ -29,6 +29,45 @@ void help (int window_id)
 }
 
 
+void print_details (int window_id, PCB *ptr)
+{
+	static const char *state[] =
+	{ "READY           ",
+	  "SEND_BLOCKED    ",
+	  "REPLY_BLOCKED   ",
+	  "RECEIVE_BLOCKED ",
+	  "MESSAGE_BLOCKED ",
+	  "INTR_BLOCKED    "
+	};
+	
+	if (!ptr->used) {
+		wm_print (window_id, "[Error] PCB slot unused\n");
+		return;
+	}
+
+	wm_print (window_id, state[ptr->state]);
+	if (ptr == active_proc) {
+		wm_print (window_id, " *     ");
+	} else {
+		wm_print (window_id, "       ");
+	}
+	wm_print (window_id, " %2d", ptr->priority);
+	wm_print (window_id, "      %s\n", ptr->name);
+}
+
+
+void print_processes (int window_id)
+{
+	wm_print (window_id, "State           Active   Prio   Name\n");
+	wm_print (window_id, "-----------------------------------------------------\n");
+	PCB *ptr = pcb;
+	for (int i = 0; i < MAX_PROCS; i++, ptr++) {
+		if (!ptr->used) continue;
+		print_details (window_id, ptr);
+	}
+}
+
+
 
 // Remove leading and trailing whitespaces. Only support one-word command now.
 void remove_whitespace (Buffer_Command *command, Buffer_Command *removed_command)
@@ -64,7 +103,7 @@ void execute_command (int window_id, Buffer_Command *removed_command)
 	} else if (k_memcmp (removed_command->buffer, "pong", k_strlen("pong")) == 0) {
 		start_pong ();
 	} else if (k_memcmp (removed_command->buffer, "ps", k_strlen("ps")) == 0) {
-		wm_print (window_id, "\nyes ps");
+		print_processes (window_id);
 	} else if (k_memcmp (removed_command->buffer, "history", k_strlen("history")) == 0) {
 		wm_print (window_id, "\nyes history");
 	} else if (k_memcmp (removed_command->buffer, "!", k_strlen("!")) == 0) { //???
