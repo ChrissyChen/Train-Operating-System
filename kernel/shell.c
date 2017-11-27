@@ -77,6 +77,27 @@ void show_history (int window_id, Buffer_Command *history_command_ptr, int num)
 }
 
 
+BOOL is_valid_repeat_command (int window_id, Buffer_Command *removed_command, int num)
+{
+	if (removed_command->buffer[0] != '!' || removed_command->length > 3) { // history_index 0-99
+		return FALSE;
+	}
+	int history_index = 0;
+	int digit;
+	for (int k = 1; k < removed_command->length; k++) {
+		digit = removed_command->buffer[k] - '0';
+		history_index = history_index * 10 + digit;
+	}
+
+	//wm_print (window_id, "history_index: %d\n", history_index);
+
+	if (history_index >= num || history_index < 0) {
+		return FALSE;
+	} 
+	return TRUE;
+}
+
+
 void about (int window_id)
 {
 	wm_print (window_id, "----------- Peace and Love -----------\n\n");
@@ -132,11 +153,12 @@ void execute_command (int window_id, Buffer_Command *removed_command, Buffer_Com
 
 	} else if (compare_string (removed_command, "ps")) {
 		print_processes (window_id);
+
 	} else if (compare_string (removed_command, "history")) {
 		show_history (window_id, history_command_ptr, num);
 
-	} else if (compare_string (removed_command, "!")) { //???
-		wm_print (window_id, "\nyes !");
+	} else if (is_valid_repeat_command (window_id, removed_command, num)) { //???
+		wm_print (window_id, "Yes, it's valid!\n");
 
 	} else if (compare_string (removed_command, "about")) {
 		about (window_id);
@@ -226,7 +248,10 @@ void shell_process (PROCESS self, PARAM param)
 		wm_print (window_id, "> ");
 		exceed_limit = read_command (window_id, &command);
 		if (exceed_limit == FALSE && command.buffer[0] != '\0') {
-			history_command[i] = command;
+			// Currently: only store in history table when i < MAX_COMMAND_HISTORY
+			if (i < MAX_COMMAND_HISTORY) {
+				history_command[i] = command;
+			}
 			//wm_print (window_id, "history: \n%2d %s\n", i, history_command[i].buffer);
 			//print_command (window_id, &command); 
 
