@@ -68,9 +68,9 @@ void print_processes (int window_id)
 }
 
 
-void show_history (int window_id, Buffer_Command *history_command_ptr, int num)
+void show_history (int window_id, Buffer_Command *history_command_ptr, int *num)
 {
-	for (int i = 0; i <= num; i++) {
+	for (int i = 0; i <= *num; i++) {
 		wm_print (window_id, "%2d %s\n", i, (*history_command_ptr).buffer);
 		history_command_ptr++;
 	}
@@ -80,16 +80,18 @@ void show_history (int window_id, Buffer_Command *history_command_ptr, int num)
 int get_history_index (Buffer_Command *removed_command)
 {
 	int history_index = 0;
-	int digit;
+	int digit = 0;
 	for (int k = 1; k < removed_command->length; k++) {
-		digit = removed_command->buffer[k] - '0';    // transfer from char to int
+		char c = removed_command->buffer[k];
+		if (c < '0' || c > '9') return -1;
+		digit = c - '0';    // transfer from char to int
 		history_index = history_index * 10 + digit;
 	}
 	return history_index;
 }
 
 
-BOOL is_valid_repeat_command (int window_id, Buffer_Command *removed_command, int num)
+BOOL is_valid_repeat_command (int window_id, Buffer_Command *removed_command, int *num)
 {
 	if (removed_command->buffer[0] != '!' || removed_command->length > 3) { // history_index 0-99
 		return FALSE;
@@ -98,19 +100,19 @@ BOOL is_valid_repeat_command (int window_id, Buffer_Command *removed_command, in
 	int history_index = get_history_index (removed_command);
 	//wm_print (window_id, "history_index: %d\n", history_index);
 
-	if (history_index >= num || history_index < 0) {
+	if (history_index > *num || history_index < 0) {
 		return FALSE;
 	} 
 	return TRUE;
 }
 
 
-void repeat_command (int window_id, Buffer_Command *removed_command, Buffer_Command *history_command_ptr, int num)
+void repeat_command (int window_id, Buffer_Command *removed_command, Buffer_Command *history_command_ptr, int *num)
 {
 	int history_index = get_history_index (removed_command);
 	Buffer_Command command = *(history_command_ptr + history_index);
 	wm_print (window_id, "%s\n", command.buffer);
-	process_command (window_id, &command, removed_command, history_command_ptr, num + 1);
+	process_command (window_id, &command, removed_command, history_command_ptr, num);
 }
 
 
@@ -153,7 +155,7 @@ void remove_whitespace (Buffer_Command *command, Buffer_Command *removed_command
 }
 
 
-void execute_command (int window_id, Buffer_Command *removed_command, Buffer_Command *history_command_ptr, int num)
+void execute_command (int window_id, Buffer_Command *removed_command, Buffer_Command *history_command_ptr, int *num)
 {
 	if (compare_string (removed_command, "help")) {
 		help (window_id);
@@ -182,6 +184,7 @@ void execute_command (int window_id, Buffer_Command *removed_command, Buffer_Com
 	} else {
 		wm_print (window_id, "[Error] Invalid command!\n");
 	}
+
 }
 
 
@@ -248,17 +251,16 @@ void print_welcome (int window_id)
 }
 
 
-void process_command (int window_id, Buffer_Command *command, Buffer_Command *removed_command, Buffer_Command *history_command, int i)
+void process_command (int window_id, Buffer_Command *command, Buffer_Command *removed_command, Buffer_Command *history_command, int *i)
 {
-	// Currently: only store in history table when i < MAX_COMMAND_HISTORY
-	if (i < MAX_COMMAND_HISTORY) {
-		history_command[i] = *command;
-	}
-	//wm_print (window_id, "history: \n%2d %s\n", i, history_command[i].buffer);
-	//print_command (window_id, command); 
-
 	remove_whitespace (command, removed_command);
 	//print_command (window_id, removed_command); 
+
+	// Currently: only store in history table when i < MAX_COMMAND_HISTORY
+	if (removed_command->buffer[0] != '!' && *i + 1 < MAX_COMMAND_HISTORY) {
+		//wm_print (window_id, "history: \n%2d %s\n", i, removed_command->buffer);
+		history_command[++(*i)] = *command;
+	}
 
 	execute_command (window_id, removed_command, history_command, i);
 	//clear_command_buffer (removed_command);	
@@ -271,7 +273,7 @@ void shell_process (PROCESS self, PARAM param)
 	Buffer_Command command;
 	Buffer_Command removed_command;
 	Buffer_Command history_command[MAX_COMMAND_HISTORY];
-	int i = 0;
+	int i = -1;
 	BOOL exceed_limit; 
 
 	int window_id = wm_create (10, 3, 55, 17);
@@ -281,8 +283,7 @@ void shell_process (PROCESS self, PARAM param)
 		wm_print (window_id, "> ");
 		exceed_limit = read_command (window_id, &command);
 		if (exceed_limit == FALSE && command.buffer[0] != '\0') {
-			process_command (window_id, &command, &removed_command, &history_command, i);
-			i++;
+			process_command (window_id, &command, &removed_command, &history_command, &i);
 		} 
 		clear_command_buffer (&command);
 	}
