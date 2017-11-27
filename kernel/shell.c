@@ -77,24 +77,40 @@ void show_history (int window_id, Buffer_Command *history_command_ptr, int num)
 }
 
 
+int get_history_index (Buffer_Command *removed_command)
+{
+	int history_index = 0;
+	int digit;
+	for (int k = 1; k < removed_command->length; k++) {
+		digit = removed_command->buffer[k] - '0';    // transfer from char to int
+		history_index = history_index * 10 + digit;
+	}
+	return history_index;
+}
+
+
 BOOL is_valid_repeat_command (int window_id, Buffer_Command *removed_command, int num)
 {
 	if (removed_command->buffer[0] != '!' || removed_command->length > 3) { // history_index 0-99
 		return FALSE;
 	}
-	int history_index = 0;
-	int digit;
-	for (int k = 1; k < removed_command->length; k++) {
-		digit = removed_command->buffer[k] - '0';
-		history_index = history_index * 10 + digit;
-	}
 
+	int history_index = get_history_index (removed_command);
 	//wm_print (window_id, "history_index: %d\n", history_index);
 
 	if (history_index >= num || history_index < 0) {
 		return FALSE;
 	} 
 	return TRUE;
+}
+
+
+void repeat_command (int window_id, Buffer_Command *removed_command, Buffer_Command *history_command_ptr, int num)
+{
+	int history_index = get_history_index (removed_command);
+	Buffer_Command command = *(history_command_ptr + history_index);
+	wm_print (window_id, "%s\n", command.buffer);
+	process_command (window_id, &command, removed_command, history_command_ptr, num + 1);
 }
 
 
@@ -157,8 +173,8 @@ void execute_command (int window_id, Buffer_Command *removed_command, Buffer_Com
 	} else if (compare_string (removed_command, "history")) {
 		show_history (window_id, history_command_ptr, num);
 
-	} else if (is_valid_repeat_command (window_id, removed_command, num)) { //???
-		wm_print (window_id, "Yes, it's valid!\n");
+	} else if (is_valid_repeat_command (window_id, removed_command, num)) {
+		repeat_command (window_id, removed_command, history_command_ptr, num);
 
 	} else if (compare_string (removed_command, "about")) {
 		about (window_id);
@@ -232,6 +248,23 @@ void print_welcome (int window_id)
 }
 
 
+void process_command (int window_id, Buffer_Command *command, Buffer_Command *removed_command, Buffer_Command *history_command, int i)
+{
+	// Currently: only store in history table when i < MAX_COMMAND_HISTORY
+	if (i < MAX_COMMAND_HISTORY) {
+		history_command[i] = *command;
+	}
+	//wm_print (window_id, "history: \n%2d %s\n", i, history_command[i].buffer);
+	//print_command (window_id, command); 
+
+	remove_whitespace (command, removed_command);
+	//print_command (window_id, removed_command); 
+
+	execute_command (window_id, removed_command, history_command, i);
+	//clear_command_buffer (removed_command);	
+}
+
+
 // Entry point of the shell process
 void shell_process (PROCESS self, PARAM param)
 {
@@ -248,19 +281,8 @@ void shell_process (PROCESS self, PARAM param)
 		wm_print (window_id, "> ");
 		exceed_limit = read_command (window_id, &command);
 		if (exceed_limit == FALSE && command.buffer[0] != '\0') {
-			// Currently: only store in history table when i < MAX_COMMAND_HISTORY
-			if (i < MAX_COMMAND_HISTORY) {
-				history_command[i] = command;
-			}
-			//wm_print (window_id, "history: \n%2d %s\n", i, history_command[i].buffer);
-			//print_command (window_id, &command); 
-
-			remove_whitespace (&command, &removed_command);
-			//print_command (window_id, &removed_command); 
-
-			execute_command (window_id, &removed_command, &history_command, i);
-			//clear_command_buffer (&removed_command);
-			i++;	
+			process_command (window_id, &command, &removed_command, &history_command, i);
+			i++;
 		} 
 		clear_command_buffer (&command);
 	}
