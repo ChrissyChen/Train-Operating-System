@@ -22,7 +22,23 @@ void send_command (char* command, char* input_buffer, int input_len, int window_
 // Clear the s88 memory buffer
 void clear_s88_buffer (int window_id)
 {
+	char input_buffer;
+	char command[MAX_ARRAY_LEN];
+	char *ptr = command;
 
+	command[0] = 'R';
+	command[1] = '\0';
+	//int string_len = k_strlen (command);
+	//wm_print (window_id, "Command length: %d\n", string_len);
+	wm_print (window_id, "s88 memory buffer cleaned (%s)\n", command);
+
+	command[1] = TRAIN_CR;
+	command[2] = '\0';
+	//string_len = k_strlen (command);
+	//wm_print (window_id, "Command length: %d\n", string_len);
+	//wm_print (window_id, "s88 memory buffer cleaned (%s)\n", command);
+
+	send_command (ptr, &input_buffer, 0, window_id);
 }
 
 
@@ -132,6 +148,7 @@ void test_train_command (int window_id)
 	sleep (100);
 	set_direction (window_id);
 	set_speed ('5', window_id);
+	clear_s88_buffer (window_id);
 }
 
 
