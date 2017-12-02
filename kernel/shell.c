@@ -26,6 +26,7 @@ void help (int window_id)
 	wm_print (window_id, "history   print all commands that have beeen typed\n");
 	wm_print (window_id, "!<number> repeat the command with the given number\n");
 	wm_print (window_id, "about     print out developer's name\n");
+	wm_print (window_id, "train     launch train application\n");
 }
 
 
@@ -180,6 +181,9 @@ void execute_command (int window_id, Buffer_Command *removed_command, Buffer_Com
 
 	} else if (compare_string (removed_command, "about")) {
 		about (window_id);
+
+	} else if (compare_string (removed_command, "train")) {
+		init_train ();
 
 	} else {
 		wm_print (window_id, "[Error] Invalid command!\n");
