@@ -46,8 +46,28 @@ void set_directon (int window_id)
 // Change the speed of a train
 void set_speed (char speed, int window_id)
 {
+	char input_buffer;
+	char command[MAX_ARRAY_LEN];
+	int len = k_strlen (TRAIN_ID);
+	//wm_print (window_id, "TRAIN_ID len: %d\n", len);
 
+	command[0] = 'L';
+	k_memcpy (&command[1], TRAIN_ID, len);
+	command[++len] = 'S';
+	command[++len] = speed;
+	command[++len] = '\0';
 
+	//int string_len = k_strlen (command);
+	//wm_print (window_id, "Command length: %d\n", string_len);
+	wm_print (window_id, "Changed train velocity to %c (%s)\n", speed, command);
+	
+	command[len] = TRAIN_CR;
+	command[++len] = '\0';
+	//string_len = k_strlen (command);
+	//wm_print (window_id, "Command length: %d\n", string_len);
+	//wm_print (window_id, "Changed train velocity to %c (%s)\n", speed, command);
+	
+	send_command (&command, &input_buffer, 0, window_id);
 }
 
 
@@ -56,6 +76,7 @@ void set_switch (char switch_id, char color, int window_id)
 {
 	char input_buffer;
 	char command[MAX_ARRAY_LEN];
+
 	command[0] = 'M';
 	command[1] = switch_id;
 	command[2] = color;
@@ -95,6 +116,7 @@ void train_process(PROCESS self, PARAM param)
 	int window_id = wm_create (12, 5, 60, 17);
 	wm_print (window_id, "****** Welcome to Train Application ******\n\n");
 	init_switch (window_id);
+	set_speed ('5', window_id);
 }
 
 
