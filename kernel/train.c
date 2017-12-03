@@ -5,8 +5,10 @@
 
 #define TRAIN_ID			"20"
 #define TRAIN_CR			'\015'
-#define TICK_NUM			8
-#define MAX_ARRAY_LEN		10
+#define TICK_SHORT			5
+#define TICK_MID			100
+#define TICK_LONG			200
+#define MAX_ARRAY_LEN		8
 #define INPUT_BUFFER_LEN	3
 #define PROBE_TIMES			2
 
@@ -81,6 +83,17 @@ char probe_contact (char* contact_id, int window_id)
 	command[++len] = '\0';
 	wm_print (window_id, "Probe result of contact %s: %c (%s)\n", contact_id, result, command);
 	*/
+}
+
+
+// Keep probing a certain contact unless it has some vehicle on it
+void keep_probe (char* contact_id, int window_id)
+{
+	while (1)
+	{
+		if (probe_contact (contact_id, window_id) == '1') return;
+		sleep (TICK_SHORT);
+	}
 }
 
 
@@ -184,7 +197,7 @@ void init_switch (int window_id)
 // Check if Zamboni exists or not
 BOOL detect_zamboni (int window_id)
 {
-	wm_print (window_id, "Detecting Zamboni... Done!\n");
+	wm_print (window_id, "Detecting Zamboni... ");
 
 	for (int i = 0; i < PROBE_TIMES; i++)
 	{
@@ -193,11 +206,11 @@ BOOL detect_zamboni (int window_id)
 			|| probe_contact ("13", window_id) == '1' || probe_contact ("14", window_id) == '1'
 			|| probe_contact ("15", window_id) == '1' || probe_contact ("3", window_id) == '1')
 		{
-			wm_print (window_id, "Zamboni exists\n");
+			wm_print (window_id, "Done!\nZamboni exists\n");
 			return TRUE;
 		} 	
 	}
-	wm_print (window_id, "Zamboni doesn't exist\n");
+	wm_print (window_id, "Done!\nZamboni doesn't exist\n");
 	return FALSE;
 }
 
@@ -249,6 +262,33 @@ int recognize_config (int window_id)
 void run_config_1 (int window_id)
 {
 	wm_print (window_id, "Running configuration 1 without Zamboni\n");
+	
+	set_switch ('6', 'R', window_id);
+	set_speed ('5', window_id);
+	keep_probe ("7", window_id);
+	set_speed ('0', window_id);
+	set_direction (window_id);
+	set_speed ('5', window_id);
+	keep_probe ("14", window_id);
+	set_switch ('1', 'R', window_id);
+	set_switch ('2', 'R', window_id);
+	set_switch ('7', 'R', window_id);
+	set_switch ('8', 'R', window_id);
+	keep_probe ("13", window_id);
+	set_switch ('8', 'G', window_id);
+	set_speed ('0', window_id);
+	set_direction (window_id);
+	set_speed ('5', window_id);
+	keep_probe ("7", window_id);
+	set_switch ('5', 'R', window_id);
+	set_switch ('6', 'R', window_id);
+	set_speed ('0', window_id);
+	set_direction (window_id);
+	set_speed ('5', window_id);
+	keep_probe ("8", window_id);
+	set_speed ('0', window_id);
+	set_direction (window_id);
+	wm_print (window_id, "Train and Wagon returned\n");
 }
 
 

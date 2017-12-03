@@ -18,7 +18,7 @@
 00000000000i[      ]   Sound support: no
 00000000000i[      ]   USB support: no
 00000000000i[      ]   VGA extension support: vbe
-00000000000i[MEM0  ] allocated memory at 0x7f20a0b91010. after alignment, vector=0x7f20a0b92000
+00000000000i[MEM0  ] allocated memory at 0x7fef019d9010. after alignment, vector=0x7fef019da000
 00000000000i[MEM0  ] 8.00MB
 00000000000i[MEM0  ] mem block size = 0x00020000, blocks=64
 00000000000i[MEM0  ] rom at 0xfffe0000/131072 ('/usr/local/share/bochs/BIOS-bochs-latest')
@@ -29,7 +29,7 @@
 00000000000i[DEV   ] PIIX3 PCI-to-ISA bridge present at device 1, function 0
 00000000000i[PLUGIN] init_dev of 'cmos' plugin device by virtual method
 00000000000i[CMOS  ] Using local time for initial clock
-00000000000i[CMOS  ] Setting initial clock to: Sat Dec  2 23:17:55 2017 (time0=1512285475)
+00000000000i[CMOS  ] Setting initial clock to: Sun Dec  3 12:19:46 2017 (time0=1512332386)
 00000000000i[PLUGIN] init_dev of 'dma' plugin device by virtual method
 00000000000i[DMA   ] channel 4 used by cascade
 00000000000i[PLUGIN] init_dev of 'pic' plugin device by virtual method
@@ -122,82 +122,81 @@
 00000321264i[BIOS  ] Shutdown flag 0
 00000321835i[BIOS  ] ram_size=0x00800000
 00000322234i[BIOS  ] ram_end=8MB
-00000334328i[BIOS  ] Found 1 cpu(s)
-00000347912i[BIOS  ] bios_table_addr: 0x000f9cd8 end=0x000fcc00
-00000347946d[PCI   ] read  PCI register 0x00 value 0x8086 (len=2)
-00000347952d[PCI   ] read  PCI register 0x02 value 0x1237 (len=2)
-00000347975d[PCI   ] read  PCI register 0x00 value 0x8086 (len=2)
-00000347981d[PCI   ] read  PCI register 0x02 value 0x1237 (len=2)
-00000348002d[PCI   ] read  PCI register 0x59 value 0x00 (len=1)
-00000675707i[PCI   ] i440FX PMC write to PAM register 59 (TLB Flush)
-00001003636i[P2ISA ] PCI IRQ routing: PIRQA# set to 0x0b
-00001003655i[P2ISA ] PCI IRQ routing: PIRQB# set to 0x09
-00001003674i[P2ISA ] PCI IRQ routing: PIRQC# set to 0x0b
-00001003693i[P2ISA ] PCI IRQ routing: PIRQD# set to 0x09
-00001003703i[P2ISA ] write: ELCR2 = 0x0a
-00001004473i[BIOS  ] PIIX3/PIIX4 init: elcr=00 0a
-00001010279d[PCI   ] read  PCI register 0x00 value 0x8086 (len=2)
-00001010285d[PCI   ] read  PCI register 0x02 value 0x1237 (len=2)
-00001010309d[PCI   ] read  PCI register 0x0A value 0x0600 (len=2)
-00001010316d[PCI   ] read  PCI register 0x00 value 0x8086 (len=2)
-00001010323d[PCI   ] read  PCI register 0x02 value 0x1237 (len=2)
-00001012154i[BIOS  ] PCI: bus=0 devfn=0x00: vendor_id=0x8086 device_id=0x1237 class=0x0600
-00001012196d[PCI   ] read  PCI register 0x10 value 0x00000000 (len=4)
-00001012224d[PCI   ] read  PCI register 0x14 value 0x00000000 (len=4)
-00001012252d[PCI   ] read  PCI register 0x18 value 0x00000000 (len=4)
-00001012280d[PCI   ] read  PCI register 0x1C value 0x00000000 (len=4)
-00001012308d[PCI   ] read  PCI register 0x20 value 0x00000000 (len=4)
-00001012336d[PCI   ] read  PCI register 0x24 value 0x00000000 (len=4)
-00001012362d[PCI   ] read  PCI register 0x30 value 0x00000000 (len=4)
-00001012374d[PCI   ] read  PCI register 0x3D value 0x00 (len=1)
-00001014433i[BIOS  ] PCI: bus=0 devfn=0x08: vendor_id=0x8086 device_id=0x7000 class=0x0601
-00001016551i[BIOS  ] PCI: bus=0 devfn=0x09: vendor_id=0x8086 device_id=0x7010 class=0x0101
-00001016780i[PIDE  ] new BM-DMA address: 0xc000
-00001017396i[BIOS  ] region 4: 0x0000c000
-00001019433i[BIOS  ] PCI: bus=0 devfn=0x0b: vendor_id=0x8086 device_id=0x7113 class=0x0680
-00001019665i[ACPI  ] new irq line = 11
-00001019677i[ACPI  ] new irq line = 9
-00001019702i[ACPI  ] new PM base address: 0xb000
-00001019716i[ACPI  ] new SM base address: 0xb100
-00001019744i[PCI   ] setting SMRAM control register to 0x4a
-00001183837i[CPU0  ] Enter to System Management Mode
-00001183848i[CPU0  ] RSM: Resuming from System Management Mode
-00001347869i[PCI   ] setting SMRAM control register to 0x0a
-00001353521d[PCI   ] read  PCI register 0x00 value 0x8086 (len=2)
-00001353527d[PCI   ] read  PCI register 0x02 value 0x1237 (len=2)
-00001353545d[PCI   ] read  PCI register 0x0A value 0x0600 (len=2)
-00001353553d[PCI   ] read  PCI register 0x30 value 0x00000000 (len=4)
-00001362735i[BIOS  ] MP table addr=0x000f9db0 MPC table addr=0x000f9ce0 size=0xc8
-00001364557i[BIOS  ] SMBIOS table addr=0x000f9dc0
-00001366730i[BIOS  ] ACPI tables: RSDP addr=0x000f9ee0 ACPI DATA addr=0x007f0000 size=0xff8
-00001369955i[BIOS  ] Firmware waking vector 0x7f00cc
-00001372426d[PCI   ] read  PCI register 0x59 value 0x30 (len=1)
-00001372435i[PCI   ] i440FX PMC write to PAM register 59 (TLB Flush)
-00001373158i[BIOS  ] bios_table_cur_addr: 0x000f9f04
-00001500775i[VBIOS ] VGABios $Id: vgabios.c,v 1.76 2013/02/10 08:07:03 vruppert Exp $
-00001503782i[VBIOS ] VBE Bios $Id: vbe.c,v 1.65 2014/07/08 18:02:25 vruppert Exp $
-00051042568i[BIOS  ] Booting from 0000:7c00
-00061273828i[BIOS  ] int13_harddisk: function 00, ELDL out of range 8a
-00296012000p[SDL   ] >>PANIC<< User requested shutdown.
-00296012000i[CPU0  ] CPU is in protected mode (active)
-00296012000i[CPU0  ] CS.mode = 32 bit
-00296012000i[CPU0  ] SS.mode = 32 bit
-00296012000i[CPU0  ] EFER   = 0x00000000
-00296012000i[CPU0  ] | EAX=00005439  EBX=00000001  ECX=00000005  EDX=00077fa6
-00296012000i[CPU0  ] | ESP=00077ff0  EBP=00000000  ESI=00000000  EDI=00000000
-00296012000i[CPU0  ] | IOPL=0 id vip vif ac vm rf nt of df IF tf sf zf AF PF cf
-00296012000i[CPU0  ] | SEG sltr(index|ti|rpl)     base    limit G D
-00296012000i[CPU0  ] |  CS:0008( 0001| 0|  0) 00000000 ffffffff 1 1
-00296012000i[CPU0  ] |  DS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00296012000i[CPU0  ] |  SS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00296012000i[CPU0  ] |  ES:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00296012000i[CPU0  ] |  FS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00296012000i[CPU0  ] |  GS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00296012000i[CPU0  ] | EIP=000074e0 (000074e0)
-00296012000i[CPU0  ] | CR0=0x60000011 CR2=0x00000000
-00296012000i[CPU0  ] | CR3=0x00000000 CR4=0x00000000
-00296012000i[CPU0  ] 0x000074e0>> jmp .-2 (0x000074e0) : EBFE
-00296012000d[PCI   ] Exit
-00296012000i[CMOS  ] Last time is 1512285549 (Sat Dec  2 23:19:09 2017)
-00296012000i[      ] restoring default signal behavior
-00296012000i[SIM   ] quit_sim called with exit code 1
+00000334318i[BIOS  ] Found 1 cpu(s)
+00000347902i[BIOS  ] bios_table_addr: 0x000f9cd8 end=0x000fcc00
+00000347936d[PCI   ] read  PCI register 0x00 value 0x8086 (len=2)
+00000347942d[PCI   ] read  PCI register 0x02 value 0x1237 (len=2)
+00000347965d[PCI   ] read  PCI register 0x00 value 0x8086 (len=2)
+00000347971d[PCI   ] read  PCI register 0x02 value 0x1237 (len=2)
+00000347992d[PCI   ] read  PCI register 0x59 value 0x00 (len=1)
+00000675697i[PCI   ] i440FX PMC write to PAM register 59 (TLB Flush)
+00001003626i[P2ISA ] PCI IRQ routing: PIRQA# set to 0x0b
+00001003645i[P2ISA ] PCI IRQ routing: PIRQB# set to 0x09
+00001003664i[P2ISA ] PCI IRQ routing: PIRQC# set to 0x0b
+00001003683i[P2ISA ] PCI IRQ routing: PIRQD# set to 0x09
+00001003693i[P2ISA ] write: ELCR2 = 0x0a
+00001004463i[BIOS  ] PIIX3/PIIX4 init: elcr=00 0a
+00001010269d[PCI   ] read  PCI register 0x00 value 0x8086 (len=2)
+00001010275d[PCI   ] read  PCI register 0x02 value 0x1237 (len=2)
+00001010299d[PCI   ] read  PCI register 0x0A value 0x0600 (len=2)
+00001010306d[PCI   ] read  PCI register 0x00 value 0x8086 (len=2)
+00001010313d[PCI   ] read  PCI register 0x02 value 0x1237 (len=2)
+00001012144i[BIOS  ] PCI: bus=0 devfn=0x00: vendor_id=0x8086 device_id=0x1237 class=0x0600
+00001012186d[PCI   ] read  PCI register 0x10 value 0x00000000 (len=4)
+00001012214d[PCI   ] read  PCI register 0x14 value 0x00000000 (len=4)
+00001012242d[PCI   ] read  PCI register 0x18 value 0x00000000 (len=4)
+00001012270d[PCI   ] read  PCI register 0x1C value 0x00000000 (len=4)
+00001012298d[PCI   ] read  PCI register 0x20 value 0x00000000 (len=4)
+00001012326d[PCI   ] read  PCI register 0x24 value 0x00000000 (len=4)
+00001012352d[PCI   ] read  PCI register 0x30 value 0x00000000 (len=4)
+00001012364d[PCI   ] read  PCI register 0x3D value 0x00 (len=1)
+00001014423i[BIOS  ] PCI: bus=0 devfn=0x08: vendor_id=0x8086 device_id=0x7000 class=0x0601
+00001016541i[BIOS  ] PCI: bus=0 devfn=0x09: vendor_id=0x8086 device_id=0x7010 class=0x0101
+00001016770i[PIDE  ] new BM-DMA address: 0xc000
+00001017386i[BIOS  ] region 4: 0x0000c000
+00001019423i[BIOS  ] PCI: bus=0 devfn=0x0b: vendor_id=0x8086 device_id=0x7113 class=0x0680
+00001019655i[ACPI  ] new irq line = 11
+00001019667i[ACPI  ] new irq line = 9
+00001019692i[ACPI  ] new PM base address: 0xb000
+00001019706i[ACPI  ] new SM base address: 0xb100
+00001019734i[PCI   ] setting SMRAM control register to 0x4a
+00001183827i[CPU0  ] Enter to System Management Mode
+00001183838i[CPU0  ] RSM: Resuming from System Management Mode
+00001347859i[PCI   ] setting SMRAM control register to 0x0a
+00001353511d[PCI   ] read  PCI register 0x00 value 0x8086 (len=2)
+00001353517d[PCI   ] read  PCI register 0x02 value 0x1237 (len=2)
+00001353535d[PCI   ] read  PCI register 0x0A value 0x0600 (len=2)
+00001353543d[PCI   ] read  PCI register 0x30 value 0x00000000 (len=4)
+00001362725i[BIOS  ] MP table addr=0x000f9db0 MPC table addr=0x000f9ce0 size=0xc8
+00001364547i[BIOS  ] SMBIOS table addr=0x000f9dc0
+00001366720i[BIOS  ] ACPI tables: RSDP addr=0x000f9ee0 ACPI DATA addr=0x007f0000 size=0xff8
+00001369945i[BIOS  ] Firmware waking vector 0x7f00cc
+00001372416d[PCI   ] read  PCI register 0x59 value 0x30 (len=1)
+00001372425i[PCI   ] i440FX PMC write to PAM register 59 (TLB Flush)
+00001373148i[BIOS  ] bios_table_cur_addr: 0x000f9f04
+00001500765i[VBIOS ] VGABios $Id: vgabios.c,v 1.76 2013/02/10 08:07:03 vruppert Exp $
+00001503772i[VBIOS ] VBE Bios $Id: vbe.c,v 1.65 2014/07/08 18:02:25 vruppert Exp $
+00045887408i[BIOS  ] Booting from 0000:7c00
+00398428000p[SDL   ] >>PANIC<< User requested shutdown.
+00398428000i[CPU0  ] CPU is in protected mode (active)
+00398428000i[CPU0  ] CS.mode = 32 bit
+00398428000i[CPU0  ] SS.mode = 32 bit
+00398428000i[CPU0  ] EFER   = 0x00000000
+00398428000i[CPU0  ] | EAX=00005439  EBX=00000001  ECX=00000005  EDX=00000000
+00398428000i[CPU0  ] | ESP=00077ff0  EBP=00000000  ESI=00000000  EDI=00000000
+00398428000i[CPU0  ] | IOPL=0 id vip vif ac vm rf nt of df IF tf sf zf AF PF cf
+00398428000i[CPU0  ] | SEG sltr(index|ti|rpl)     base    limit G D
+00398428000i[CPU0  ] |  CS:0008( 0001| 0|  0) 00000000 ffffffff 1 1
+00398428000i[CPU0  ] |  DS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+00398428000i[CPU0  ] |  SS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+00398428000i[CPU0  ] |  ES:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+00398428000i[CPU0  ] |  FS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+00398428000i[CPU0  ] |  GS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+00398428000i[CPU0  ] | EIP=0000763e (0000763e)
+00398428000i[CPU0  ] | CR0=0x60000011 CR2=0x00000000
+00398428000i[CPU0  ] | CR3=0x00000000 CR4=0x00000000
+00398428000i[CPU0  ] 0x0000763e>> jmp .-2 (0x0000763e) : EBFE
+00398428000d[PCI   ] Exit
+00398428000i[CMOS  ] Last time is 1512332485 (Sun Dec  3 12:21:25 2017)
+00398428000i[      ] restoring default signal behavior
+00398428000i[SIM   ] quit_sim called with exit code 1
