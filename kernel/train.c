@@ -3,11 +3,20 @@
 
 #include <kernel.h>
 
-#define TRAIN_ID "20"
-#define TRAIN_CR '\015'
-#define TICK_NUM 8
-#define MAX_ARRAY_LEN 10
-#define INPUT_BUFFER_LEN 3
+#define TRAIN_ID			"20"
+#define TRAIN_CR			'\015'
+#define TICK_NUM			8
+#define MAX_ARRAY_LEN		10
+#define INPUT_BUFFER_LEN	3
+
+#define CONFIG_1			1
+#define CONFIG_2			2
+#define CONFIG_3			3
+#define CONFIG_4			4
+#define CONFIG_1_ZAMBONI	5
+#define CONFIG_2_ZAMBONI	6
+#define CONFIG_3_ZAMBONI	7
+#define CONFIG_4_ZAMBONI	8
 
 
 void send_command (char* command, char* input_buffer, int input_len)
@@ -31,7 +40,9 @@ void clear_s88_buffer (int window_id)
 	command[1] = '\0';
 	//int string_len = k_strlen (command);
 	//wm_print (window_id, "Command length: %d\n", string_len);
-	wm_print (window_id, "s88 memory buffer cleaned (%s)\n", command);
+	
+	// !!!Comment out to show a more clear view in the window area
+	//wm_print (window_id, "s88 memory buffer cleaned (%s)\n", command);
 
 	command[1] = TRAIN_CR;
 	command[2] = '\0';
@@ -44,7 +55,7 @@ void clear_s88_buffer (int window_id)
 
 
 // Probe a contact to know if any vehicle is on it
-void probe_contact (char* contact_id, int window_id)
+char probe_contact (char* contact_id, int window_id)
 {
 	clear_s88_buffer (window_id);
 
@@ -59,12 +70,16 @@ void probe_contact (char* contact_id, int window_id)
 	command[++len] = '\0';
 	send_command (ptr, &input_buffer[0], INPUT_BUFFER_LEN);
 
+	return input_buffer[1];
+
+	/*
 	// Get the COM1 returned result via com_reader process
 	char result = input_buffer[1];
 	command[0] = 'C';
 	k_memcpy (&command[1], contact_id, len);
 	command[++len] = '\0';
 	wm_print (window_id, "Probe result of contact %s: %c (%s)\n", contact_id, result, command);
+	*/
 }
 
 
@@ -165,6 +180,149 @@ void init_switch (int window_id)
 }
 
 
+// Check if Zamboni exists or not
+BOOL detect_zamboni (int window_id)
+{
+	wm_print (window_id, "Detecting Zamboni... Done!\n");
+	if (probe_contact ("4", window_id) == '1' || probe_contact ("6", window_id) == '1'
+				|| probe_contact ("3", window_id) == '1')
+	{
+		wm_print (window_id, "Zamboni exists\n");
+		return TRUE;
+	} 
+	wm_print (window_id, "Zamboni doesn't exist\n");
+	return FALSE;
+}
+
+
+int locate_train_and_wagon (BOOL found_zamboni, int window_id)
+{
+	wm_print (window_id, "Locating Train and Wagon... Done!\n");
+	if (probe_contact ("8", window_id) == '1' && probe_contact ("11", window_id) == '1')
+	{
+		if (found_zamboni) return CONFIG_1_ZAMBONI; 
+		return CONFIG_1;
+	} 
+	else if (probe_contact ("12", window_id) == '1' && probe_contact ("2", window_id) == '1')
+	{
+		if (found_zamboni) return CONFIG_2_ZAMBONI; 
+		return CONFIG_2;
+	}
+	else if (probe_contact ("5", window_id) == '1' && probe_contact ("11", window_id) == '1')
+	{
+		if (found_zamboni) return CONFIG_3_ZAMBONI; 
+		return CONFIG_3;
+	}
+	else if (probe_contact ("16", window_id) == '1' && probe_contact ("9", window_id) == '1')
+	{
+		if (found_zamboni) return CONFIG_4_ZAMBONI; 
+		return CONFIG_4;
+	}
+	else
+	{
+		wm_print (window_id, "[Error] Unknown configuration!\n");
+		return -1;
+	}
+}
+
+
+// Recognize which one of the eight configurations is chosen
+int recognize_config (int window_id)
+{
+	BOOL found_zamboni;
+	int config_num;
+
+	wm_print (window_id, "Recognizing configurations...\n");
+	found_zamboni = detect_zamboni (window_id);
+	config_num = locate_train_and_wagon (found_zamboni, window_id);
+	return config_num;
+}
+
+
+void run_config_1 (int window_id)
+{
+	wm_print (window_id, "Running configuration 1 without Zamboni\n");
+}
+
+
+void run_config_2 (int window_id)
+{
+	wm_print (window_id, "Running configuration 2 without Zamboni\n");
+}
+
+
+void run_config_3 (int window_id)
+{
+	wm_print (window_id, "Running configuration 3 without Zamboni\n");
+}
+
+
+void run_config_4 (int window_id)
+{
+	wm_print (window_id, "Running configuration 4 without Zamboni\n");
+}
+
+
+void run_config_1_zamboni (int window_id)
+{
+	wm_print (window_id, "Running configuration 1 with Zamboni\n");
+}
+
+
+void run_config_2_zamboni (int window_id)
+{
+	wm_print (window_id, "Running configuration 2 with Zamboni\n");
+}
+
+
+void run_config_3_zamboni (int window_id)
+{
+	wm_print (window_id, "Running configuration 3 with Zamboni\n");
+}
+
+
+void run_config_4_zamboni (int window_id)
+{
+	wm_print (window_id, "Running configuration 4 with Zamboni\n");
+}
+
+
+void run_train (int window_id)
+{
+	int config = recognize_config (window_id);
+	
+	switch (config)
+	{
+		case CONFIG_1:
+			run_config_1 (window_id);
+			break;
+		case CONFIG_2:
+			run_config_2 (window_id);
+			break;
+		case CONFIG_3:
+			run_config_3 (window_id);
+			break;
+		case CONFIG_4:
+			run_config_4 (window_id);
+			break;
+		case CONFIG_1_ZAMBONI:
+			run_config_1_zamboni (window_id);
+			break;
+		case CONFIG_2_ZAMBONI:
+			run_config_2_zamboni (window_id);
+			break;
+		case CONFIG_3_ZAMBONI:
+			run_config_3_zamboni (window_id);
+			break;
+		case CONFIG_4_ZAMBONI:
+			run_config_4_zamboni (window_id);
+			break;
+		default:
+			panic ("run_train(): wrong configuration");
+	}
+}
+
+
 // For functionality testing only - test under config 1
 void test_train_command (int window_id)
 {
@@ -175,6 +333,7 @@ void test_train_command (int window_id)
 	set_direction (window_id);
 	set_speed ('5', window_id);
 
+	/*
 	probe_contact ("7", window_id);
 	sleep (20);
 	probe_contact ("10", window_id);
@@ -182,7 +341,7 @@ void test_train_command (int window_id)
 	probe_contact ("14", window_id);
 	sleep (100);
 	probe_contact ("3", window_id);
-	
+	*/
 }
 
 
@@ -192,7 +351,8 @@ void train_process(PROCESS self, PARAM param)
 	int window_id = wm_create (12, 5, 60, 17);
 	wm_print (window_id, "****** Welcome to Train Application ******\n\n");
 	init_switch (window_id);
-	test_train_command (window_id);
+	//test_train_command (window_id);
+	run_train (window_id);
 }
 
 
