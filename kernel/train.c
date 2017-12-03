@@ -5,8 +5,9 @@
 
 #define TRAIN_ID "20"
 #define TRAIN_CR '\015'
-#define TICK_NUM 10
+#define TICK_NUM 8
 #define MAX_ARRAY_LEN 10
+#define INPUT_BUFFER_LEN 3
 
 
 void send_command (char* command, char* input_buffer, int input_len, int window_id)
@@ -39,6 +40,31 @@ void clear_s88_buffer (int window_id)
 	//wm_print (window_id, "s88 memory buffer cleaned (%s)\n", command);
 
 	send_command (ptr, &input_buffer, 0, window_id);
+}
+
+
+// Probe a contact to know if any vehicle is on it
+void probe_contact (char* contact_id, int window_id)
+{
+	clear_s88_buffer (window_id);
+
+	char input_buffer[INPUT_BUFFER_LEN];	
+	char command[MAX_ARRAY_LEN];
+	char *ptr = command;
+	int len = k_strlen (contact_id);
+
+	command[0] = 'C';
+	k_memcpy (&command[1], contact_id, len);
+	command[++len] = TRAIN_CR;
+	command[++len] = '\0';
+	send_command (ptr, &input_buffer[0], INPUT_BUFFER_LEN, window_id);
+
+	// Get the COM1 returned result via com_reader process
+	char result = input_buffer[1];
+	command[0] = 'C';
+	k_memcpy (&command[1], contact_id, len);
+	command[++len] = '\0';
+	wm_print (window_id, "Probe result of contact %s: %c (%s)\n", contact_id, result, command);
 }
 
 
@@ -139,7 +165,7 @@ void init_switch (int window_id)
 }
 
 
-// For testing only
+// For functionality testing only - test under config 1
 void test_train_command (int window_id)
 {
 	set_speed ('5', window_id);
@@ -148,7 +174,15 @@ void test_train_command (int window_id)
 	sleep (100);
 	set_direction (window_id);
 	set_speed ('5', window_id);
-	clear_s88_buffer (window_id);
+
+	probe_contact ("7", window_id);
+	sleep (20);
+	probe_contact ("10", window_id);
+	sleep (100);
+	probe_contact ("14", window_id);
+	sleep (100);
+	probe_contact ("3", window_id);
+	
 }
 
 
