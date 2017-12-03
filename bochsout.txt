@@ -18,7 +18,7 @@
 00000000000i[      ]   Sound support: no
 00000000000i[      ]   USB support: no
 00000000000i[      ]   VGA extension support: vbe
-00000000000i[MEM0  ] allocated memory at 0x7efc55d5a010. after alignment, vector=0x7efc55d5b000
+00000000000i[MEM0  ] allocated memory at 0x7f9552a83010. after alignment, vector=0x7f9552a84000
 00000000000i[MEM0  ] 8.00MB
 00000000000i[MEM0  ] mem block size = 0x00020000, blocks=64
 00000000000i[MEM0  ] rom at 0xfffe0000/131072 ('/usr/local/share/bochs/BIOS-bochs-latest')
@@ -29,7 +29,7 @@
 00000000000i[DEV   ] PIIX3 PCI-to-ISA bridge present at device 1, function 0
 00000000000i[PLUGIN] init_dev of 'cmos' plugin device by virtual method
 00000000000i[CMOS  ] Using local time for initial clock
-00000000000i[CMOS  ] Setting initial clock to: Sat Dec  2 21:44:59 2017 (time0=1512279899)
+00000000000i[CMOS  ] Setting initial clock to: Sat Dec  2 23:13:07 2017 (time0=1512285187)
 00000000000i[PLUGIN] init_dev of 'dma' plugin device by virtual method
 00000000000i[DMA   ] channel 4 used by cascade
 00000000000i[PLUGIN] init_dev of 'pic' plugin device by virtual method
@@ -176,28 +176,27 @@
 00001373198i[BIOS  ] bios_table_cur_addr: 0x000f9f04
 00001500815i[VBIOS ] VGABios $Id: vgabios.c,v 1.76 2013/02/10 08:07:03 vruppert Exp $
 00001503822i[VBIOS ] VBE Bios $Id: vbe.c,v 1.65 2014/07/08 18:02:25 vruppert Exp $
-00093311698i[BIOS  ] Booting from 0000:7c00
-00104697707i[BIOS  ] int13_cdrom: function 00, ELDL out of range fb
-00496292000p[SDL   ] >>PANIC<< User requested shutdown.
-00496292000i[CPU0  ] CPU is in protected mode (active)
-00496292000i[CPU0  ] CS.mode = 32 bit
-00496292000i[CPU0  ] SS.mode = 32 bit
-00496292000i[CPU0  ] EFER   = 0x00000000
-00496292000i[CPU0  ] | EAX=000066d6  EBX=00000008  ECX=00000005  EDX=00000000
-00496292000i[CPU0  ] | ESP=0009fffc  EBP=00000000  ESI=000e1875  EDI=00001ca0
-00496292000i[CPU0  ] | IOPL=0 id vip vif ac vm rf nt of df IF tf sf zf af pf cf
-00496292000i[CPU0  ] | SEG sltr(index|ti|rpl)     base    limit G D
-00496292000i[CPU0  ] |  CS:0008( 0001| 0|  0) 00000000 ffffffff 1 1
-00496292000i[CPU0  ] |  DS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00496292000i[CPU0  ] |  SS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00496292000i[CPU0  ] |  ES:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00496292000i[CPU0  ] |  FS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00496292000i[CPU0  ] |  GS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-00496292000i[CPU0  ] | EIP=00007d90 (00007d90)
-00496292000i[CPU0  ] | CR0=0x60000011 CR2=0x00000000
-00496292000i[CPU0  ] | CR3=0x00000000 CR4=0x00000000
-00496292000i[CPU0  ] 0x00007d90>> jmp .-2 (0x00007d90) : EBFE
-00496292000d[PCI   ] Exit
-00496292000i[CMOS  ] Last time is 1512280023 (Sat Dec  2 21:47:03 2017)
-00496292000i[      ] restoring default signal behavior
-00496292000i[SIM   ] quit_sim called with exit code 1
+00090927150i[BIOS  ] Booting from 0000:7c00
+00257316000p[SDL   ] >>PANIC<< User requested shutdown.
+00257316000i[CPU0  ] CPU is in protected mode (active)
+00257316000i[CPU0  ] CS.mode = 32 bit
+00257316000i[CPU0  ] SS.mode = 32 bit
+00257316000i[CPU0  ] EFER   = 0x00000000
+00257316000i[CPU0  ] | EAX=000b8f00  EBX=00000000  ECX=00000f20  EDX=00000f20
+00257316000i[CPU0  ] | ESP=00077fbc  EBP=00000000  ESI=0000841c  EDI=00077fd8
+00257316000i[CPU0  ] | IOPL=0 id vip vif ac vm rf nt of df if tf sf zf af pf cf
+00257316000i[CPU0  ] | SEG sltr(index|ti|rpl)     base    limit G D
+00257316000i[CPU0  ] |  CS:0008( 0001| 0|  0) 00000000 ffffffff 1 1
+00257316000i[CPU0  ] |  DS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+00257316000i[CPU0  ] |  SS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+00257316000i[CPU0  ] |  ES:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+00257316000i[CPU0  ] |  FS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+00257316000i[CPU0  ] |  GS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+00257316000i[CPU0  ] | EIP=00004e11 (00004e11)
+00257316000i[CPU0  ] | CR0=0x60000011 CR2=0x00000000
+00257316000i[CPU0  ] | CR3=0x00000000 CR4=0x00000000
+00257316000i[CPU0  ] 0x00004e11>> jmp .-2 (0x00004e11) : EBFE
+00257316000d[PCI   ] Exit
+00257316000i[CMOS  ] Last time is 1512285251 (Sat Dec  2 23:14:11 2017)
+00257316000i[      ] restoring default signal behavior
+00257316000i[SIM   ] quit_sim called with exit code 1

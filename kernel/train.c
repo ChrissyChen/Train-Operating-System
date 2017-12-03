@@ -8,6 +8,7 @@
 #define TICK_NUM			8
 #define MAX_ARRAY_LEN		10
 #define INPUT_BUFFER_LEN	3
+#define PROBE_TIMES			2
 
 #define CONFIG_1			1
 #define CONFIG_2			2
@@ -184,12 +185,18 @@ void init_switch (int window_id)
 BOOL detect_zamboni (int window_id)
 {
 	wm_print (window_id, "Detecting Zamboni... Done!\n");
-	if (probe_contact ("4", window_id) == '1' || probe_contact ("6", window_id) == '1'
-				|| probe_contact ("3", window_id) == '1')
+
+	for (int i = 0; i < PROBE_TIMES; i++)
 	{
-		wm_print (window_id, "Zamboni exists\n");
-		return TRUE;
-	} 
+		if (probe_contact ("4", window_id) == '1' || probe_contact ("6", window_id) == '1'
+			|| probe_contact ("7", window_id) == '1' || probe_contact ("10", window_id) == '1'
+			|| probe_contact ("13", window_id) == '1' || probe_contact ("14", window_id) == '1'
+			|| probe_contact ("15", window_id) == '1' || probe_contact ("3", window_id) == '1')
+		{
+			wm_print (window_id, "Zamboni exists\n");
+			return TRUE;
+		} 	
+	}
 	wm_print (window_id, "Zamboni doesn't exist\n");
 	return FALSE;
 }
