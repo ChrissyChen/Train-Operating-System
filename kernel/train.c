@@ -10,7 +10,7 @@
 #define INPUT_BUFFER_LEN 3
 
 
-void send_command (char* command, char* input_buffer, int input_len, int window_id)
+void send_command (char* command, char* input_buffer, int input_len)
 {
 	COM_Message msg;
 	msg.output_buffer = command;
@@ -39,7 +39,7 @@ void clear_s88_buffer (int window_id)
 	//wm_print (window_id, "Command length: %d\n", string_len);
 	//wm_print (window_id, "s88 memory buffer cleaned (%s)\n", command);
 
-	send_command (ptr, &input_buffer, 0, window_id);
+	send_command (ptr, &input_buffer, 0);
 }
 
 
@@ -57,7 +57,7 @@ void probe_contact (char* contact_id, int window_id)
 	k_memcpy (&command[1], contact_id, len);
 	command[++len] = TRAIN_CR;
 	command[++len] = '\0';
-	send_command (ptr, &input_buffer[0], INPUT_BUFFER_LEN, window_id);
+	send_command (ptr, &input_buffer[0], INPUT_BUFFER_LEN);
 
 	// Get the COM1 returned result via com_reader process
 	char result = input_buffer[1];
@@ -92,7 +92,7 @@ void set_direction (int window_id)
 	//wm_print (window_id, "Command length: %d\n", string_len);
 	//wm_print (window_id, "Reversed direction of train (%s)\n", command);
 	
-	send_command (ptr, &input_buffer, 0, window_id);
+	send_command (ptr, &input_buffer, 0);
 }
 
 
@@ -121,7 +121,7 @@ void set_speed (char speed, int window_id)
 	//wm_print (window_id, "Command length: %d\n", string_len);
 	//wm_print (window_id, "Changed train velocity to %c (%s)\n", speed, command);
 	
-	send_command (ptr, &input_buffer, 0, window_id);
+	send_command (ptr, &input_buffer, 0);
 }
 
 
@@ -149,7 +149,7 @@ void set_switch (char switch_id, char color, int window_id)
 	//will has a garbage character because shell can't recognize '\015' but train can recognize it as a terminator
 	//wm_print (window_id, "Changed switch %c to %c (%s)\n", switch_id, color, command);
 	
-	send_command (ptr, &input_buffer, 0, window_id);
+	send_command (ptr, &input_buffer, 0);
 }
 
 
