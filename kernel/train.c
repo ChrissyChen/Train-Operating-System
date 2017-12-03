@@ -360,6 +360,7 @@ void train_process(PROCESS self, PARAM param)
 	init_switch (window_id);
 	//test_train_command (window_id);
 	run_train (window_id);
+	while (1); // to avoid fatal exception 6
 }
 
 
