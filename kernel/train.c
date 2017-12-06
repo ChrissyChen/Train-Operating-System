@@ -338,7 +338,6 @@ void run_config_1 (int window_id)
 	keep_probe ("8", window_id);
 	set_speed ('0', window_id);
 	set_direction (window_id);
-	wm_print (window_id, "Train and Wagon returned\n");
 }
 
 
@@ -363,6 +362,37 @@ void run_config_4 (int window_id)
 void run_config_1_zamboni (int window_id)
 {
 	wm_print (window_id, "Running configuration 1 with Zamboni\n");
+
+	set_switch ('6', 'R', window_id);
+	keep_probe ("10", window_id);   // Zamboni
+	
+	set_speed ('5', window_id);
+	keep_probe ("7", window_id);  // sleep maybe after
+	set_speed ('0', window_id);
+	set_direction (window_id);
+	set_speed ('5', window_id);
+	keep_probe ("3", window_id);  // Zamboni
+	set_switch ('1', 'R', window_id);
+	set_switch ('2', 'R', window_id);
+	set_switch ('7', 'R', window_id);
+	keep_probe ("12", window_id);  // Train
+	set_speed ('0', window_id);
+	set_switch ('8', 'R', window_id);
+	keep_probe ("13", window_id);  // Zamboni 
+	set_speed ('4', window_id);
+	keep_probe ("14", window_id);  // Zamboni
+	keep_probe ("12", window_id);  // Zamboni sleep after probe12
+	set_switch ('1', 'G', window_id);
+	set_speed ('5', window_id);
+	keep_probe ("3", window_id);   // Train and Wagon  sleep after probe3
+	set_switch ('1', 'R', window_id);
+	set_switch ('5', 'R', window_id);
+	set_switch ('6', 'R', window_id);
+	keep_probe ("7", window_id);
+	set_speed ('4', window_id);
+	keep_probe ("8", window_id);
+	set_speed ('0', window_id);
+	set_direction (window_id);
 }
 
 
@@ -417,6 +447,7 @@ void run_train (int window_id)
 		default:
 			panic ("run_train(): wrong configuration");
 	}
+	wm_print (window_id, "Train and Wagon returned\n");
 }
 
 
