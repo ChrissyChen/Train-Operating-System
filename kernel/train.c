@@ -540,6 +540,39 @@ void run_config_3_zamboni (int window_id)
 void run_config_4_zamboni (int window_id)
 {
 	wm_print (window_id, "Running configuration 4 with Zamboni\n");
+
+	keep_probe ("13", window_id);		// Zamboni
+	set_switch ('9', 'G', window_id);
+	set_speed ('5', window_id);
+	
+	keep_probe ("6", window_id);		// Zamboni
+	set_switch ('9', 'R', window_id);
+	set_switch ('2', 'R', window_id);
+	set_switch ('7', 'G', window_id);
+	set_switch ('6', 'G', window_id);
+	keep_probe ("7", window_id);
+	set_speed ('0', window_id);         // Train
+	set_direction (window_id);
+	set_switch ('5', 'R', window_id);
+	set_speed ('5', window_id);
+	keep_probe ("12", window_id);       // Train
+	set_speed ('0', window_id);
+	set_switch ('5', 'G', window_id);
+
+	keep_probe ("10", window_id);		// Zamboni
+	set_switch ('1', 'R', window_id);
+	set_speed ('5', window_id);
+	keep_probe ("13", window_id);		// Train
+	set_speed ('0', window_id);
+	set_direction (window_id);
+	set_switch ('9', 'G', window_id);
+	set_speed ('5', window_id);
+	set_switch ('1', 'G', window_id);
+
+	keep_probe ("16", window_id);		// Train
+	set_speed ('0', window_id);
+	set_direction (window_id);
+	set_switch ('9', 'R', window_id);
 }
 
 
