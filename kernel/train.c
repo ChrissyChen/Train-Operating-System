@@ -373,6 +373,23 @@ void run_config_2 (int window_id)
 void run_config_3 (int window_id)
 {
 	wm_print (window_id, "Running configuration 3 without Zamboni\n");
+
+	set_switch ('3', 'R', window_id);
+	set_switch ('4', 'R', window_id);
+	set_speed ('5', window_id);
+	set_switch ('1', 'R', window_id);
+	set_switch ('2', 'R', window_id);
+	set_switch ('7', 'R', window_id);
+	keep_probe ("12", window_id);
+	set_switch ('8', 'R', window_id);
+	keep_probe ("14", window_id);
+	set_speed ('0', window_id);
+	set_direction (window_id);
+	set_switch ('8', 'G', window_id);
+	set_speed ('5', window_id);
+	keep_probe ("5", window_id);
+	set_speed ('0', window_id);
+	set_direction (window_id);
 }
 
 
