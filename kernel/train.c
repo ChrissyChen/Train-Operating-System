@@ -213,7 +213,7 @@ int detect_zamboni_direction (int window_id)
 			wm_print (window_id, "Done!\nZamboni is running anti-clockwise\n");
 			return ANTI_CLOCKWISE;
 		}
-		sleep (TICK_SHORT);
+		//sleep (TICK_SHORT);
 	}
 	wm_print (window_id, "Fail to detect the direction Zamboni is running\n");
 	return -1;
@@ -480,6 +480,37 @@ void run_config_2_zamboni (int window_id)
 void run_config_3_zamboni (int window_id)
 {
 	wm_print (window_id, "Running configuration 3 with Zamboni\n");
+
+	set_switch ('3', 'R', window_id);
+	keep_probe ("7", window_id);		// Zamboni
+	set_switch ('4', 'R', window_id);
+	set_speed ('5', window_id);
+	
+	keep_probe ("3", window_id);		// Zamboni
+	set_switch ('4', 'G', window_id);
+	set_switch ('1', 'R', window_id);
+	set_switch ('2', 'R', window_id);
+	set_switch ('7', 'R', window_id);
+	
+	keep_probe ("12", window_id);		//Train
+	set_speed ('0', window_id);
+	keep_probe ("14", window_id);		// Zamboni
+	set_switch ('8', 'R', window_id);
+	set_speed ('5', window_id);
+	keep_probe ("13", window_id);		// Train
+	set_switch ('1', 'G', window_id);
+	keep_probe ("3", window_id);		//Train
+	set_switch ('1', 'R', window_id);
+
+	keep_probe ("7", window_id);		//Train
+	set_speed ('0', window_id);
+	set_direction (window_id);
+	set_switch ('4', 'R', window_id);
+	set_speed ('5', window_id);
+	keep_probe ("5", window_id);		//Train
+	set_speed ('0', window_id);
+	set_direction (window_id);
+
 }
 
 
