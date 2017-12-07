@@ -6,8 +6,6 @@
 #define TRAIN_ID			"20"
 #define TRAIN_CR			'\015'
 #define TICK_SHORT			3
-#define TICK_MID			80
-//#define TICK_LONG			200
 #define MAX_ARRAY_LEN		8
 #define INPUT_BUFFER_LEN	3
 #define PROBE_TIMES			3
@@ -44,18 +42,12 @@ void clear_s88_buffer (int window_id)
 
 	command[0] = 'R';
 	command[1] = '\0';
-	//int string_len = k_strlen (command);
-	//wm_print (window_id, "Command length: %d\n", string_len);
 	
 	// !!!Comment out to show a more clear view in the window area
 	//wm_print (window_id, "s88 memory buffer cleaned (%s)\n", command);
 
 	command[1] = TRAIN_CR;
 	command[2] = '\0';
-	//string_len = k_strlen (command);
-	//wm_print (window_id, "Command length: %d\n", string_len);
-	//wm_print (window_id, "s88 memory buffer cleaned (%s)\n", command);
-
 	send_command (ptr, &input_buffer, 0);
 }
 
@@ -75,17 +67,7 @@ char probe_contact (char* contact_id, int window_id)
 	command[++len] = TRAIN_CR;
 	command[++len] = '\0';
 	send_command (ptr, &input_buffer[0], INPUT_BUFFER_LEN);
-
 	return input_buffer[1];
-
-	/*
-	// Get the COM1 returned result via com_reader process
-	char result = input_buffer[1];
-	command[0] = 'C';
-	k_memcpy (&command[1], contact_id, len);
-	command[++len] = '\0';
-	wm_print (window_id, "Probe result of contact %s: %c (%s)\n", contact_id, result, command);
-	*/
 }
 
 
@@ -107,23 +89,15 @@ void set_direction (int window_id)
 	char command[MAX_ARRAY_LEN];
 	char *ptr = command;
 	int len = k_strlen (TRAIN_ID);
-	//wm_print (window_id, "TRAIN_ID len: %d\n", len);
 
 	command[0] = 'L';
 	k_memcpy (&command[1], TRAIN_ID, len);
 	command[++len] = 'D';
 	command[++len] = '\0';
-
-	//int string_len = k_strlen (command);
-	//wm_print (window_id, "Command length: %d\n", string_len);
 	wm_print (window_id, "Reversed direction of train (%s)\n", command);
 	
 	command[len] = TRAIN_CR;
 	command[++len] = '\0';
-	//string_len = k_strlen (command);
-	//wm_print (window_id, "Command length: %d\n", string_len);
-	//wm_print (window_id, "Reversed direction of train (%s)\n", command);
-	
 	send_command (ptr, &input_buffer, 0);
 }
 
@@ -135,24 +109,16 @@ void set_speed (char speed, int window_id)
 	char command[MAX_ARRAY_LEN];
 	char *ptr = command;
 	int len = k_strlen (TRAIN_ID);
-	//wm_print (window_id, "TRAIN_ID len: %d\n", len);
 
 	command[0] = 'L';
 	k_memcpy (&command[1], TRAIN_ID, len);
 	command[++len] = 'S';
 	command[++len] = speed;
 	command[++len] = '\0';
-
-	//int string_len = k_strlen (command);
-	//wm_print (window_id, "Command length: %d\n", string_len);
 	wm_print (window_id, "Changed train velocity to %c (%s)\n", speed, command);
 	
 	command[len] = TRAIN_CR;
 	command[++len] = '\0';
-	//string_len = k_strlen (command);
-	//wm_print (window_id, "Command length: %d\n", string_len);
-	//wm_print (window_id, "Changed train velocity to %c (%s)\n", speed, command);
-	
 	send_command (ptr, &input_buffer, 0);
 }
 
@@ -168,19 +134,10 @@ void set_switch (char switch_id, char color, int window_id)
 	command[1] = switch_id;
 	command[2] = color;
 	command[3] = '\0';
-		
-	//int string_len = k_strlen (command);
-	//wm_print (window_id, "Command length: %d\n", string_len);
 	wm_print (window_id, "Changed switch %c to %c (%s)\n", switch_id, color, command);
 
 	command[3] = TRAIN_CR;
 	command[4] = '\0';
-	//string_len = k_strlen (command);
-	//wm_print (window_id, "Command length: %d\n", string_len);
-	
-	//will has a garbage character because shell can't recognize '\015' but train can recognize it as a terminator
-	//wm_print (window_id, "Changed switch %c to %c (%s)\n", switch_id, color, command);
-	
 	send_command (ptr, &input_buffer, 0);
 }
 
@@ -217,25 +174,6 @@ int detect_zamboni_direction (int window_id)
 	}
 	wm_print (window_id, "Fail to detect the direction Zamboni is running\n");
 	return -1;
-
-	/*
-	sleep (TICK_MID);
-	if (probe_contact ("6", window_id) == '1' || probe_contact ("7", window_id) == '1')
-	{
-		wm_print (window_id, "Done!\nZamboni is running clockwise\n");
-		return CLOCKWISE;
-	} 
-	else if (probe_contact ("3", window_id) == '1' || probe_contact ("15", window_id) == '1')
-	{
-		wm_print (window_id, "Done!\nZamboni is running anti-clockwise\n");
-		return ANTI_CLOCKWISE;
-	}
-	else 
-	{
-		wm_print (window_id, "Fail to detect the direction Zamboni is running\n");
-		return -1;
-	}
-	*/
 }
 
 
