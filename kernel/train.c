@@ -5,12 +5,12 @@
 
 #define TRAIN_ID			"20"
 #define TRAIN_CR			'\015'
-#define TICK_SHORT			5
+#define TICK_SHORT			3
 #define TICK_MID			80
 //#define TICK_LONG			200
 #define MAX_ARRAY_LEN		8
 #define INPUT_BUFFER_LEN	3
-#define PROBE_TIMES			2
+#define PROBE_TIMES			3
 
 #define CLOCKWISE			1
 #define ANTI_CLOCKWISE		2
@@ -334,7 +334,7 @@ void run_config_1 (int window_id)
 	set_switch ('6', 'R', window_id);
 	set_speed ('0', window_id);
 	set_direction (window_id);
-	set_speed ('4', window_id);
+	set_speed ('5', window_id);
 	keep_probe ("8", window_id);
 	set_speed ('0', window_id);
 	set_direction (window_id);
@@ -363,7 +363,7 @@ void run_config_2 (int window_id)
 	set_speed ('0', window_id);
 	set_direction (window_id);
 	set_switch ('2', 'R', window_id);
-	set_speed ('4', window_id);
+	set_speed ('5', window_id);
 	keep_probe ("12", window_id);
 	set_speed ('0', window_id);
 	set_direction (window_id);
@@ -388,21 +388,20 @@ void run_config_1_zamboni (int window_id)
 
 	set_switch ('6', 'R', window_id);
 	keep_probe ("10", window_id);   // Zamboni
-	
 	set_speed ('5', window_id);
 	keep_probe ("7", window_id);  // sleep maybe after
 	set_speed ('0', window_id);
 	set_direction (window_id);
 	set_speed ('5', window_id);
-	keep_probe ("3", window_id);  // Zamboni
+	keep_probe ("3", window_id);  // Zamboni maybe probe4
 	set_switch ('1', 'R', window_id);
 	set_switch ('2', 'R', window_id);
 	set_switch ('7', 'R', window_id);
 	keep_probe ("12", window_id);  // Train
 	set_speed ('0', window_id);
-	set_switch ('8', 'R', window_id);
 	keep_probe ("13", window_id);  // Zamboni 
-	set_speed ('4', window_id);
+	set_switch ('8', 'R', window_id);
+	set_speed ('5', window_id);
 	keep_probe ("14", window_id);  // Zamboni
 	keep_probe ("12", window_id);  // Zamboni sleep after probe12
 	set_switch ('1', 'G', window_id);
@@ -411,8 +410,6 @@ void run_config_1_zamboni (int window_id)
 	set_switch ('1', 'R', window_id);
 	set_switch ('5', 'R', window_id);
 	set_switch ('6', 'R', window_id);
-	keep_probe ("7", window_id);
-	set_speed ('4', window_id);
 	keep_probe ("8", window_id);
 	set_speed ('0', window_id);
 	set_direction (window_id);
@@ -422,6 +419,44 @@ void run_config_1_zamboni (int window_id)
 void run_config_2_zamboni (int window_id)
 {
 	wm_print (window_id, "Running configuration 2 with Zamboni\n");
+	
+	set_switch ('2', 'R', window_id);
+	keep_probe ("13", window_id);   // Zamboni
+	set_switch ('1', 'R', window_id);
+	set_speed ('5', window_id);
+	keep_probe ("14", window_id);   // Train
+	set_speed ('0', window_id);
+	set_direction (window_id);
+	set_switch ('2', 'G', window_id);
+	set_speed ('5', window_id);
+	keep_probe ("1", window_id);
+	set_speed ('0', window_id);
+	set_switch ('1', 'G', window_id);
+
+	keep_probe ("4", window_id);	// Zamboni
+	set_switch ('3', 'G', window_id);
+	set_switch ('4', 'R', window_id);
+	set_speed ('5', window_id);
+	keep_probe ("6", window_id);    // Train
+	set_speed ('0', window_id);
+	set_direction (window_id);
+	set_speed ('5', window_id);
+	keep_probe ("1", window_id);	//Train
+	set_speed ('0', window_id);
+	set_switch ('4', 'G', window_id);
+
+	keep_probe ("13", window_id);	// Zamboni	
+	set_switch ('1', 'R', window_id);
+	set_speed ('5', window_id);
+	keep_probe ("14", window_id);	//Train
+	set_speed ('0', window_id);
+	set_direction (window_id);
+	set_switch ('2', 'R', window_id);
+	set_speed ('5', window_id);
+	keep_probe ("12", window_id);
+	set_speed ('0', window_id);
+	set_direction (window_id);
+	set_switch ('1', 'G', window_id);
 }
 
 
