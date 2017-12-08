@@ -5,11 +5,10 @@
 
 #define TRAIN_ID			"20"
 #define TRAIN_CR			'\015'
-#define TICK_SHORT			3
-#define TICK_MID			5
+#define TICK				5
 #define MAX_ARRAY_LEN		8
 #define INPUT_BUFFER_LEN	3
-#define PROBE_TIMES			200
+#define PROBE_TIMES			30
 
 #define CLOCKWISE			1
 #define ANTI_CLOCKWISE		2
@@ -30,7 +29,7 @@ void send_command (char* command, char* input_buffer, int input_len)
 	msg.output_buffer = command;
 	msg.input_buffer = input_buffer;
 	msg.len_input_buffer = input_len;
-	sleep (TICK_MID);
+	sleep (TICK);
 	send (com_port, &msg);	
 }
 
@@ -79,7 +78,6 @@ void keep_probe (char* contact_id, int window_id)
 	while (1)
 	{
 		if (probe_contact (contact_id, window_id) == '1') return;
-		sleep (TICK_SHORT);
 	}
 }
 
@@ -172,7 +170,6 @@ int detect_zamboni_direction (int window_id)
 			wm_print (window_id, "Done!\nZamboni is running anti-clockwise\n");
 			return ANTI_CLOCKWISE;
 		}
-		//sleep (TICK_SHORT);
 	}
 	wm_print (window_id, "Fail to detect the direction Zamboni is running\n");
 	return -1;
@@ -237,10 +234,12 @@ int recognize_config (int window_id)
 
 	wm_print (window_id, "Recognizing configurations...\n");
 	found_zamboni = detect_zamboni (window_id);
+	/*
 	if (found_zamboni) 
 	{
 		direction = detect_zamboni_direction (window_id);
 	}
+	*/
 	config_num = locate_train_and_wagon (found_zamboni, window_id);
 	return config_num;
 }
@@ -271,7 +270,7 @@ void run_config_1 (int window_id)
 	set_switch ('6', 'R', window_id);
 	set_speed ('0', window_id);
 	set_direction (window_id);
-	set_speed ('5', window_id);
+	set_speed ('4', window_id);
 	keep_probe ("8", window_id);
 	set_speed ('0', window_id);
 	set_direction (window_id);
@@ -300,7 +299,7 @@ void run_config_2 (int window_id)
 	set_speed ('0', window_id);
 	set_direction (window_id);
 	set_switch ('2', 'R', window_id);
-	set_speed ('5', window_id);
+	set_speed ('4', window_id);
 	keep_probe ("12", window_id);
 	set_speed ('0', window_id);
 	set_direction (window_id);
@@ -323,7 +322,7 @@ void run_config_3 (int window_id)
 	set_speed ('0', window_id);
 	set_direction (window_id);
 	set_switch ('8', 'G', window_id);
-	set_speed ('5', window_id);
+	set_speed ('4', window_id);
 	keep_probe ("5", window_id);
 	set_speed ('0', window_id);
 	set_direction (window_id);
@@ -352,7 +351,7 @@ void run_config_4 (int window_id)
 	set_direction (window_id);
 	set_switch ('5', 'G', window_id);
 	set_switch ('9', 'G', window_id);
-	set_speed ('5', window_id);
+	set_speed ('4', window_id);
 	keep_probe ("16", window_id);
 	set_speed ('0', window_id);
 	set_direction (window_id);
@@ -429,7 +428,7 @@ void run_config_2_zamboni (int window_id)
 	set_speed ('0', window_id);
 	set_direction (window_id);
 	set_switch ('2', 'R', window_id);
-	set_speed ('5', window_id);
+	set_speed ('4', window_id);
 	keep_probe ("12", window_id);
 	set_speed ('0', window_id);
 	set_direction (window_id);
