@@ -6,9 +6,10 @@
 #define TRAIN_ID			"20"
 #define TRAIN_CR			'\015'
 #define TICK_SHORT			3
+#define TICK_MID			5
 #define MAX_ARRAY_LEN		8
 #define INPUT_BUFFER_LEN	3
-#define PROBE_TIMES			3
+#define PROBE_TIMES			200
 
 #define CLOCKWISE			1
 #define ANTI_CLOCKWISE		2
@@ -29,6 +30,7 @@ void send_command (char* command, char* input_buffer, int input_len)
 	msg.output_buffer = command;
 	msg.input_buffer = input_buffer;
 	msg.len_input_buffer = input_len;
+	sleep (TICK_MID);
 	send (com_port, &msg);	
 }
 
@@ -184,10 +186,7 @@ BOOL detect_zamboni (int window_id)
 
 	for (int i = 0; i < PROBE_TIMES; i++)
 	{
-		if (probe_contact ("4", window_id) == '1' || probe_contact ("6", window_id) == '1'
-			|| probe_contact ("7", window_id) == '1' || probe_contact ("10", window_id) == '1'
-			|| probe_contact ("13", window_id) == '1' || probe_contact ("14", window_id) == '1'
-			|| probe_contact ("15", window_id) == '1' || probe_contact ("3", window_id) == '1')
+		if (probe_contact ("7", window_id) == '1')
 		{
 			wm_print (window_id, "Done!\nZamboni exists\n");
 			return TRUE;
